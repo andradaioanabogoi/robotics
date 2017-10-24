@@ -16,12 +16,20 @@ motorParams.feedForwardGain = 255/20.0
 motorParams.minPWM = 18.0
 motorParams.pidParameters.minOutput = -255
 motorParams.pidParameters.maxOutput = 255
-motorParams.pidParameters.k_p = 100.0
+motorParams.pidParameters.k_p = 200
 motorParams.pidParameters.k_i = 0.0
-motorParams.pidParameters.k_d = 0.0
+#motorParams.pidParameters.k_d = -50.0
 
-interface.setMotorAngleControllerParameters(motors[0],motorParams)
-interface.setMotorAngleControllerParameters(motors[1],motorParams)
+motorParamsRight = motorParams
+motorParamsLeft = motorParams
+
+#motorParamsRight.pidParameters.k_p = 200
+#motorParamsLeft.pidParameters.k_p = 200
+motorParamsRight.pidParameters.k_d = -5.0
+motorParamsLeft.pidParameters.k_d = 0
+
+interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
+interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 #starting to log for tuning 
 logfile = raw_input("Specify logfile: ")
 interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
