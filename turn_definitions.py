@@ -30,7 +30,7 @@ THRESHOLD = 1.05
 
 def Left90deg():
     print("turning 90 left")
-    angle = 6.1
+    angle = 6.05
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while interface.motorRotationSpeedReferenceReached:
