@@ -27,39 +27,30 @@ interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
 def Left90deg():
-    print("turning 90 left")
+    print("Turning 90 left")
     THRESHOLD = 4
     angle = 3.75
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
-    while interface.motorAngleReferencesReached: # changed here too
+    while interface.motorAngleReferencesReached: 
         timeNow = time.time()
 	if timeNow - startTime > THRESHOLD:
-		print "stopping because we did not reach"
+		print "Done with turning 90 left -> Ready to execute next move!"
 		break
     
 def Right90deg():
-    print("turning 90 right")
-    THRESHOLD = 1.05
-    angle = 6.06
-    startTime = time.time()
-    interface.increaseMotorAngleReferences(motors, [-angle, angle])
-    while interface.motorRotationSpeedReferenceReached:
-        timeNow = time.time()
-        if timeNow - startTime > THRESHOLD:
-                print "stopping because we did not reach"
-                break
+    pass
 
 def Forward40():
-    print("forward 40")
-    THRESHOLD = 3
+    print("Forward 40")
+    THRESHOLD = 4
     distance = 11.75
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [-distance, -distance])
-    while interface.motorAngleReferencesReached: # changed function here
+    while interface.motorAngleReferencesReached:
         timeNow = time.time()
         if timeNow - startTime > THRESHOLD:
-                print "stopping because we did not reach"
+                print "Done with forward 40 -> Ready to execute next move!"
                 break
 
 def Backwards40():
