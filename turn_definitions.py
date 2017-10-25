@@ -30,7 +30,7 @@ THRESHOLD = 1.05
 
 def Left90deg():
     print("turning 90 left")
-    angle = 6.05
+    angle = 6.65
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while interface.motorRotationSpeedReferenceReached:
@@ -40,9 +40,19 @@ def Left90deg():
 		break
     
 def Right90deg():
-    pass
+    print("turning 90 right")
+    angle = 6.06
+    startTime = time.time()
+    interface.increaseMotorAngleReferences(motors, [-angle, angle])
+    while interface.motorRotationSpeedReferenceReached:
+        timeNow = time.time()
+        if timeNow - startTime > THRESHOLD:
+                print "stopping because we did not reach"
+                break
 
 
+
+#Right90deg()
 Left90deg()
 
 interface.terminate()
