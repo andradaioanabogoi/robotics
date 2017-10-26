@@ -16,9 +16,9 @@ motorParams.feedForwardGain = 255/20.0
 motorParams.minPWM = 18.0
 motorParams.pidParameters.minOutput = -255
 motorParams.pidParameters.maxOutput = 255
-motorParams.pidParameters.k_p = 350.0
+motorParams.pidParameters.k_p = 340.0
 motorParams.pidParameters.k_i = 300.0
-motorParams.pidParameters.k_d = 50.0
+motorParams.pidParameters.k_d = 300.0
 
 motorParamsRight = motorParams
 motorParamsLeft = motorParams
@@ -31,8 +31,8 @@ motorParamsLeft = motorParams
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 #starting to log for tuning 
-logfile = raw_input("Specify logfile: ")
-interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
+#logfile = raw_input("Specify logfile: ")
+#interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 while True:
 	angle = float(input("Enter a angle to rotate (in radians): "))
 
@@ -47,5 +47,5 @@ while True:
 
 	print "Destination reached!"
 #stop to log for tuning	
-interface.stopLogging()
+#interface.stopLogging()
 interface.terminate()
