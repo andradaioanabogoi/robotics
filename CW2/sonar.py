@@ -1,5 +1,6 @@
 import brickpi
 import time
+from numpy import median
 
 interface=brickpi.Interface()
 interface.initialize()
@@ -49,13 +50,30 @@ def Forward():
 # Moves backwards for provided amount of radians to avoid the obstacle in front of it.
 def Backward(distance):
     pass
-                                
+
+# Improves measures but taking median of last few measures
+def medianSonar():
+   MEASURES = 8
+   sonar = [0]*MEASURES
+   i = 0
+   while i < MEASURES:
+     sonar[i] = interface.getSensorValue(us_port)
+     i += 1
+     time.sleep(0.01)  
+   return int(median(sonar))
+
 # Program execution.
 while True:
-	usReading = interface.getSensorValue(port)
+	usReading = interface.getSensorValue(us_port)
+    # otherwise we use the suggested median measurement that follows.
+    # usReading = medianSonar()
+    
+    # used for debugging
+    print "usReading: " + usReading
 
     while usReading != 30:
         error = usReading - 30
+        print "Error: " + error
         speed = -error * speed
         interface.setMotorRotationSpeedReferences(motors,[-speed,-speed])
 
