@@ -82,9 +82,16 @@ def Backwards40():
 #logfile = raw_input("Specify logfile: ")
 #interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
-Right90deg()
+#Right90deg()
+Forward40()
+Left90deg()
 #Forward40()
-#Left90deg()
+Left90deg()
+Forward40()
+#Forward40()
+#Forward40()
+#Backwards40()
+#Backwards40()
 #Backwards40()
 
 #interface.stopLogging()
