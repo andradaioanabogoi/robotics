@@ -63,7 +63,7 @@ def Backward(distance):
                 
 # Left and Right angles movement should be calibrated in the program carpet_square.py
 # TODO get these functions from that program after calibration.
-def eft90deg():
+def Left90deg():
     print("Turning 90 left")
     THRESHOLD = 3
     angle = 4.85
