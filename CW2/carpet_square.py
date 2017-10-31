@@ -16,8 +16,8 @@ motorParams.feedForwardGain = 255/20.0
 motorParams.minPWM = 18.0
 motorParams.pidParameters.minOutput = -255
 motorParams.pidParameters.maxOutput = 255
-motorParams.pidParameters.k_p = 340
-motorParams.pidParameters.k_i = 300
+motorParams.pidParameters.k_p = 360
+motorParams.pidParameters.k_i = 340
 motorParams.pidParameters.k_d = 300
 
 motorParamsRight = motorParams
@@ -29,7 +29,7 @@ interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 def Left90deg():
     print("Turning 90 left")
     THRESHOLD = 3
-    angle = 3.75
+    angle = 4.15
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while interface.motorAngleReferencesReached: 
@@ -41,7 +41,7 @@ def Left90deg():
 def Right90deg():
     print("Turning 90 right")
     THRESHOLD = 3
-    angle = 3.75
+    angle = 4.15
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [-angle, angle])
     while interface.motorAngleReferencesReached:
@@ -49,7 +49,7 @@ def Right90deg():
         if timeNow - startTime > THRESHOLD:
                 print "Done with turning 90 right -> Ready to execute next move!"
                 break
-# forward with argument distance TODO
+
 def Forward40():
     print("Forward 40")
     THRESHOLD = 3
@@ -72,15 +72,15 @@ def Backwards40():
         timeNow = time.time()
         if timeNow - startTime > THRESHOLD:
                 print "Done with backwards 40 -> Ready to execute next move!"
-                break
-    
+                break    
 
-Forward40()
-Left90deg()
-Forward40()
-Left90deg()
-Forward40()
-Left90deg()
-Forward40()
+#logfile = raw_input("Specify logfile: ")
+#interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
+#Right90deg()
+#Forward40()
+#Left90deg()
+#Backwards40()
+
+#interface.stopLogging()
 interface.terminate()
