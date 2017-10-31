@@ -38,7 +38,7 @@ interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
 # Touch sensors, L/R for left and right.
 L_touch_port = 1 
-R_touch_port = 2 
+R_touch_port = 0 
 
 interface.sensorEnable(L_touch_port, brickpi.SensorType.SENSOR_TOUCH);
 interface.sensorEnable(R_touch_port, brickpi.SensorType.SENSOR_TOUCH);
@@ -47,7 +47,7 @@ interface.sensorEnable(R_touch_port, brickpi.SensorType.SENSOR_TOUCH);
 # Non stop forward movement.
 def Forward():
     print("Moving forward non stop")
-    interface.setMotorRotationSpeedReferences(motors,[speed,speed])
+    interface.setMotorRotationSpeedReferences(motors,[-speed, -speed])
 
 # Moves backwards for provided amount of radians to avoid the obstacle in front of it.
 def Backward(distance):
@@ -63,10 +63,10 @@ def Backward(distance):
                 
 # Left and Right angles movement should be calibrated in the program carpet_square.py
 # TODO get these functions from that program after calibration.
-def Left90deg():
+def eft90deg():
     print("Turning 90 left")
     THRESHOLD = 3
-    angle = 4.15
+    angle = 4.85
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while interface.motorAngleReferencesReached: 
@@ -78,7 +78,7 @@ def Left90deg():
 def Right90deg():
     print("Turning 90 right")
     THRESHOLD = 3
-    angle = 4.15
+    angle = 4.85
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [-angle, angle])
     while interface.motorAngleReferencesReached:
@@ -90,21 +90,27 @@ def Right90deg():
 # Program execution.
 while True:
     # keep moving forward till you hit an obstacle
-    Forward()
-    #Backward(15)    
-
+    Forward()    
+    # print "L_touched = " + str(L_touched)
+    # print "R_touched = " + str(R_touched)
     # touch sensors readings.
-   # L_touched = interface.getSensorValue(L_touch_port)
-    #R_touched = interface.getSensorValue(R_touch_port)
+    L_touched = interface.getSensorValue(L_touch_port)
+    R_touched = interface.getSensorValue(R_touch_port)
+    print "L_touched = " + str( L_touched[0])
+    print "R_touched = " + str(R_touched[0]) 
+   
     
     # if both sensors are touched means we have a collision of type "->|OBSTACLE"
-    #if L_touched and R_touched:
-      #  print "Hit obsacle - BOTH sensors"
+    if L_touched[0] or R_touched[0]:
+        print "L_touched = " + str( L_touched[0])
+        print "R_touched = " + str(R_touched[0])
+
+        print "Hit obsacle - BOTH sensors"
         # to avoid it move backwards and then turn in a random Left or Right Direction.
-       # Backward(4)
-       # turn_options = [Left90deg, Right90deg]
-      #  random.choice(turn_options)()
-     #   Forward()
+        Backward(10)
+        turn_options = [Left90deg, Right90deg]
+        random.choice(turn_options)()
+        Forward()
     
     # if left sensor is touched means we have a left diagonal collision "/>|OBSTACLE"
     #elif L_touched:
