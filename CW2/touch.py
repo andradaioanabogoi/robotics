@@ -1,6 +1,6 @@
 import brickpi
 import time
-import random # to enable random turn after collision with both sensors touched.
+import random 
 
 interface=brickpi.Interface()
 interface.initialize()
@@ -62,7 +62,6 @@ def Backward(distance):
                 break
                 
 # Left and Right angles movement should be calibrated in the program carpet_square.py
-# TODO get these functions from that program after calibration.
 def Left90deg():
     print("Turning 90 left")
     THRESHOLD = 3
@@ -91,20 +90,13 @@ def Right90deg():
 while True:
     # keep moving forward till you hit an obstacle
     Forward()    
-    # print "L_touched = " + str(L_touched)
-    # print "R_touched = " + str(R_touched)
+   
     # touch sensors readings.
     L_touched = interface.getSensorValue(L_touch_port)
     R_touched = interface.getSensorValue(R_touch_port)
-    print "L_touched = " + str( L_touched[0])
-    print "R_touched = " + str(R_touched[0]) 
-   
-    
+     
     # if both sensors are touched means we have a collision of type "->|OBSTACLE"
     if L_touched[0] or R_touched[0]:
-        print "L_touched = " + str( L_touched[0])
-        print "R_touched = " + str(R_touched[0])
-
         print "Hit obsacle - BOTH sensors"
         # to avoid it move backwards and then turn in a random Left or Right Direction.
         Backward(10)
@@ -113,19 +105,19 @@ while True:
         Forward()
     
     # if left sensor is touched means we have a left diagonal collision "/>|OBSTACLE"
-    #elif L_touched:
-      #  print "Hit obstacle - LEFT sensor" 
-      #  Backward(4)
-      #  Left90deg()
-      #  Forward()
+    elif L_touched[0]:
+       print "Hit obstacle - LEFT sensor" 
+       Backward(10)
+       Left90deg()
+       Forward()
     
     # if right sensor is touched means we have a rigth diagonal collision "\>|OBSTACLE"
-    #elif R_touched:
-     #   print "Hit obstacle - RIGHT sensor"
-      #  Backward(4)
-      #  Right90deg()
-       # Forward()
+    elif R_touched[0]:
+       print "Hit obstacle - RIGHT sensor"
+       Backward(10)
+       Right90deg()
+       Forward()
         
-    time.sleep(0.5) # not 100% sure about value here.
+    time.sleep(0.5) # this is the time between feedback intervals.
 
 interface.terminate()
