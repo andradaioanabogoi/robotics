@@ -1,4 +1,4 @@
-import brickpi # 
+import brickpi  
 import time
 
 interface=brickpi.Interface()
