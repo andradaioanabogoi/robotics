@@ -20,12 +20,12 @@ motorParams.pidParameters.maxOutput = 255
 motorParamsRight = motorParams
 motorParamsLeft = motorParams
 
-motorParamsLeft.pidParameters.k_p = 200
-motorParamsLeft.pidParameters.k_i = 0
+motorParamsLeft.pidParameters.k_p = 250
+motorParamsLeft.pidParameters.k_i = 100
 motorParamsLeft.pidParameters.k_d = 0
 
-motorParamsRight.pidParameters.k_p = 200
-motorParamsRight.pidParameters.k_i = 0
+motorParamsRight.pidParameters.k_p = 250
+motorParamsRight.pidParameters.k_i = 100
 motorParamsRight.pidParameters.k_d = 0
 
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
@@ -51,17 +51,10 @@ def Forward10():
     while not interface.motorAngleReferencesReached(motors):  
 	time.sleep(0.1)    
 
-#logfile = raw_input("Specify logfile: ")
-#interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
+logfile = raw_input("Specify logfile: ")
+interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
-#Forward10()
-#Forward10()
-#Forward10()
-#Forward10()
-
-#Left90deg()
-
-#Forward10()
+Forward10()
 #Forward10()
 #Forward10()
 #Forward10()
@@ -80,5 +73,12 @@ def Forward10():
 #Forward10()
 #Forward10()
 
-#interface.stopLogging()
+#Left90deg()
+
+#Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
+
+interface.stopLogging()
 interface.terminate()
