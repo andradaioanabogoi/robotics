@@ -21,42 +21,32 @@ motorParamsRight = motorParams
 motorParamsLeft = motorParams
 
 motorParamsLeft.pidParameters.k_p = 100
-motorParamsLeft.pidParameters.k_i = 25
-motorParamsLeft.pidParameters.k_d = 25
+motorParamsLeft.pidParameters.k_i = 0
+motorParamsLeft.pidParameters.k_d = 0
 
-motorParamsRight.pidParameters.k_p = 115
-motorParamsRight.pidParameters.k_i = 25
-motorParamsRight.pidParameters.k_d = 25
+motorParamsRight.pidParameters.k_p = 125
+motorParamsRight.pidParameters.k_i = 0
+motorParamsRight.pidParameters.k_d = 0
 
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
 def Left90deg():
     print("Turning 90 left")
-    THRESHOLD = 3
     angle = 4.85
-    startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
-    while interface.motorAngleReferencesReached: 
-        timeNow = time.time()
-	if timeNow - startTime > THRESHOLD:
-		print "Done with turning 90 Left -> Ready to execute next move!"
-		break
+    while not interface.motorAngleReferencesReached(motors): 
+	time.sleep(0.1) 
     
 def Forward10():
     print("Forward 10")
-    THRESHOLD = 3
     distance = 3.0
-    startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [-distance, -distance])
-    while interface.motorAngleReferencesReached:
-        timeNow = time.time()
-        if timeNow - startTime > THRESHOLD:
-                print "Done with Forward 10 -> Ready to execute next move!"
-                break
+    while not interface.motorAngleReferencesReached(motors):  
+	time.sleep(0.1)    
 
-#logfile = raw_input("Specify logfile: ")
-#interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
+logfile = raw_input("Specify logfile: ")
+interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
 Forward10()
 #Forward10()
@@ -64,7 +54,16 @@ Forward10()
 #Forward10()
 
 #Left90deg()
+#Left90deg()
+#Forward10()
+#Left90deg()
 
+#Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
+
+#Left90deg()
 #Forward10()
 #Forward10()
 #Forward10()
@@ -77,12 +76,5 @@ Forward10()
 #Forward10()
 #Forward10()
 
-#Left90deg()
-
-#Forward10()
-#Forward10()
-#Forward10()
-#Forward10()
-
-#interface.stopLogging()
+interface.stopLogging()
 interface.terminate()
