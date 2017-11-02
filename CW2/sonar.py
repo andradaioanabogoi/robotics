@@ -8,7 +8,7 @@ interface.initialize()
 # Settings from CW1 carried forward here to move forward, backwards and turn.
 motors = [0,3]
 speed = 6.0
-
+#speed = 12
 # Motor ports.
 interface.motorEnable(motors[0])
 interface.motorEnable(motors[1])
@@ -65,6 +65,11 @@ while True:
     
     usReading = interface.getSensorValue(us_port)
    
+    k = 0.02
+
+    #if (usReading[0] < 35.0):
+    #   break
+
     # otherwise we use the suggested median measurement that follows.
     # usReading = medianSonar()
     
@@ -72,20 +77,18 @@ while True:
     print "usReading ZERO: " + str(usReading[0])
     print "Error ZERO: " + str(usReading[0]-35.0)
 
-    while usReading[0] != 35.0:
-        error = usReading[0] - 35.0
-	print "usReading ONE: " + str(usReading[0])
-        print "Error ONE: " + str(error)
+    error = usReading[0] - 35.0
+    print "usReading ONE: " + str(usReading[0])
+    print "Error ONE: " + str(error)
 
-	# here we need to use velocity control and set the velocity demands of both wheels to be proportional to the
-	# error between the actual and the desired distance using prop control with a single gain value.
-	speed = speed * -error
+    # here we need to use velocity control and set the velocity demands of both wheels to be proportional to the
+    # error between the actual and the desired distance using prop control with a single gain value.
+    new_speed = speed * -error * k
 
-	while interface.motorRotationSpeedReferenceReached:
-            interface.setMotorRotationSpeedReferences(motors, [speed, speed])
+    #while interface.motorRotationSpeedReferenceReached:
+    interface.setMotorRotationSpeedReferences(motors, [new_speed, new_speed])
 
-        # maybe we need to use the function motorRotationSpeedReferenceReached(...) somewhere.
-        
-	time.sleep(0.5)
+    # maybe we need to use the function motorRotationSpeedReferenceReached(...) somewhere.
+    time.sleep(0.5)
 
 interface.terminate()
