@@ -31,11 +31,16 @@ motorParamsRight.pidParameters.k_d = 0
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
+# Number of Particles predefined as 100.
+NUMBER_OF_PARTICLES = 100
+
 # Array of 100 Particles of the form [x, y, th].
-particles = [[0,0,0]] * 100
+particles = [[0,0,0]] * NUMBER_OF_PARTICLES
 
 # Array of Weights corresponding to particles.
-weights = [0] * 100
+weights = [1 / NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES
+
+
 
 def Left90deg():
     print("Turning 90 left")
@@ -53,6 +58,11 @@ def Forward10():
 
 logfile = raw_input("Specify logfile: ")
 interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
+
+# testing the particles
+#print particles[0]
+#print particles[0][0]
+#print weights[0]
 
 Forward10()
 #Forward10()
