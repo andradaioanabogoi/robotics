@@ -96,7 +96,7 @@ while True:
     R_touched = interface.getSensorValue(R_touch_port)
      
     # if both sensors are touched means we have a collision of type "->|OBSTACLE"
-    if L_touched[0] or R_touched[0]:
+    if L_touched[0] and R_touched[0]:
         print "Hit obsacle - BOTH sensors"
         # to avoid it move backwards and then turn in a random Left or Right Direction.
         Backward(10)

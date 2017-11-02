@@ -46,7 +46,7 @@ def Left90deg():
 def Forward10():
     print("Forward 10")
     THRESHOLD = 3
-    distance = 3.91
+    distance = 3.0
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [-distance, -distance])
     while interface.motorAngleReferencesReached:
@@ -59,30 +59,30 @@ def Forward10():
 #interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
 Forward10()
-Forward10()
-Forward10()
-Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
 
-Left90deg()
+#Left90deg()
 
-Forward10()
-Forward10()
-Forward10()
-Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
 
-Left90deg()
+#Left90deg()
 
-Forward10()
-Forward10()
-Forward10()
-Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
 
-Left90deg()
+#Left90deg()
 
-Forward10()
-Forward10()
-Forward10()
-Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
+#Forward10()
 
 #interface.stopLogging()
 interface.terminate()
