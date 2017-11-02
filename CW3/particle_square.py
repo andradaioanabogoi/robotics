@@ -1,6 +1,7 @@
 import brickpi  
 import time
 import random
+import math
 
 interface=brickpi.Interface()
 interface.initialize()
@@ -41,20 +42,22 @@ particles = [[0,0,0]] * NUMBER_OF_PARTICLES
 # Array of Weights corresponding to particles.
 weights = [1 / NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES
 
-# Updates uncertainty for Forward movement of 10 cm
-def UpdateParticlesAfterForward10(particles)
-    x = particle[0]
-    y = particle[1]
-    th = particle[2]
-    D = 3 # need to calculate this correctly in radians.
-    mu = 3  # need to find this as mentioned in the spec.
-    sigma = 5   # and this as well.
+# Updates uncertainty for Forward movement of 10 cm.
+def UpdateParticlesAfterForward10(particles):
+    D = 3 # need to calculate accuretaly how many radians are 10cm.
+    mu = 0  # in the middle of spec page 2 says something about mean = 0.
+    sigma = 5   # but need to find this standard deviation from real execution.
     
     for particle in particles:
-            x = x + (D + randmo.gauss(mu, sigma)) * 
-            y = y + (D + randmo.gauss(mu, sigma)) * 
-            th = th + randmo.gauss(mu, sigma)
+        particle[0] = particle[0] + (D + randmo.gauss(mu, sigma)) * math.cos(particle[2])
+        particle[1] = particle[1] + (D + randmo.gauss(mu, sigma)) * math.sin(particle[2])
+        particle[2] = particle[2] + randmo.gauss(mu, sigma)
 
+# Updates uncertainty for Left 90 movement.            
+def UpdateParticlesAfterLeft90(particles):
+    for particle in particles:
+        particle[2] = particle[2] + randmo.gauss(mu, sigma) + randmo.gauss(mu, sigma)    
+            
 def Left90deg():
     print("Turning 90 left")
     angle = 4.85
@@ -79,12 +82,16 @@ interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
 # First forward movement
 Forward10()
+#UpdateParticlesAfterForward10(particles)
 #Forward10()
+#UpdateParticlesAfterForward10(particles)
 #Forward10()
+#UpdateParticlesAfterForward10(particles)
 #Forward10()
 
 # First Left
 #Left90deg()
+#UpdateParticlesAfterLeft90(particles)
 
 # Second forward movement
 #Forward10()
