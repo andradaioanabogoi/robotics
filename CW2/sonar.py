@@ -65,7 +65,7 @@ while True:
     
     usReading = interface.getSensorValue(us_port)
    
-    k = 0.02
+    k = 0.03
 
     #if (usReading[0] < 35.0):
     #   break
@@ -86,6 +86,9 @@ while True:
     new_speed = speed * -error * k
 
     #while interface.motorRotationSpeedReferenceReached:
+    if (new_speed > 15):
+       new_speed = 15
+
     interface.setMotorRotationSpeedReferences(motors, [new_speed, new_speed])
 
     # maybe we need to use the function motorRotationSpeedReferenceReached(...) somewhere.
