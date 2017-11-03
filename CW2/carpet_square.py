@@ -16,64 +16,44 @@ motorParams.feedForwardGain = 255/20.0
 motorParams.minPWM = 18.0
 motorParams.pidParameters.minOutput = -255
 motorParams.pidParameters.maxOutput = 255
-motorParams.pidParameters.k_p = 340
-motorParams.pidParameters.k_i = 300
-motorParams.pidParameters.k_d = 300
 
 motorParamsRight = motorParams
 motorParamsLeft = motorParams
+
+motorParamsLeft.pidParameters.k_p = 340
+motorParamsLeft.pidParameters.k_i = 300
+motorParamsLeft.pidParameters.k_d = 0
+
+motorParamsRight.pidParameters.k_p = 340
+motorParamsRight.pidParameters.k_i = 300
+motorParamsRight.pidParameters.k_d = 0
 
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
 def Left90deg():
     print("Turning 90 left")
-    THRESHOLD = 3
-    angle = 3.75
-    startTime = time.time()
+    angle = 4.3
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
-    while interface.motorAngleReferencesReached: 
-        timeNow = time.time()
-	if timeNow - startTime > THRESHOLD:
-		print "Done with turning 90 left -> Ready to execute next move!"
-		break
-    
+    while not interface.motorAngleReferencesReached(motors):
+        time.sleep(0.1)
+        
 def Right90deg():
-    print("Turning 90 right")
-    THRESHOLD = 3
-    angle = 3.75
-    startTime = time.time()
-    interface.increaseMotorAngleReferences(motors, [-angle, angle])
-    while interface.motorAngleReferencesReached:
-        timeNow = time.time()
-        if timeNow - startTime > THRESHOLD:
-                print "Done with turning 90 right -> Ready to execute next move!"
-                break
-# forward with argument distance TODO
+    pass
+
 def Forward40():
-    print("Forward 40")
-    THRESHOLD = 3
+    print("Forward 10")
     distance = 11.75
-    startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [-distance, -distance])
-    while interface.motorAngleReferencesReached:
-        timeNow = time.time()
-        if timeNow - startTime > THRESHOLD:
-                print "Done with forward 40 -> Ready to execute next move!"
-                break
+    while not interface.motorAngleReferencesReached(motors):
+        time.sleep(0.1)
+
 
 def Backwards40():
-    print("Backwards 40")
-    THRESHOLD = 3
-    distance = 11.75
-    startTime = time.time()
-    interface.increaseMotorAngleReferences(motors, [distance, distance])
-    while interface.motorAngleReferencesReached:
-        timeNow = time.time()
-        if timeNow - startTime > THRESHOLD:
-                print "Done with backwards 40 -> Ready to execute next move!"
-                break
-    
+    pass
+
+#logfile = raw_input("Specify logfile: ")
+#interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
 Forward40()
 Left90deg()
@@ -83,4 +63,5 @@ Forward40()
 Left90deg()
 Forward40()
 
+#interface.stopLogging()
 interface.terminate()

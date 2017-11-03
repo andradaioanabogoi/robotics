@@ -8,7 +8,7 @@ interface.initialize()
 # Settings from CW1 carried forward here to move forward, backwards and turn.
 motors = [0,3]
 speed = 6.0
-
+#speed = 12
 # Motor ports.
 interface.motorEnable(motors[0])
 interface.motorEnable(motors[1])
@@ -25,27 +25,25 @@ motorParams.pidParameters.maxOutput = 255
 motorParamsRight = motorParams
 motorParamsLeft = motorParams
 
-motorParamsLeft.pidParameters.k_p = 340
-motorParamsLeft.pidParameters.k_i = 300
-motorParamsLeft.pidParameters.k_d = 300
+motorParamsLeft.pidParameters.k_p = 100
+motorParamsLeft.pidParameters.k_i = 25
+motorParamsLeft.pidParameters.k_d = 25
 
-motorParamsRight.pidParameters.k_p = 340 
-motorParamsRight.pidParameters.k_i = 300
-motorParamsRight.pidParameters.k_d = 300
+motorParamsRight.pidParameters.k_p = 115 
+motorParamsRight.pidParameters.k_i = 25
+motorParamsRight.pidParameters.k_d = 25
 
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
 # sonar sensor definitons.
-us_port = 1
+us_port = 2
 interface.sensorEnable(us_port, brickpi.SensorType.SENSOR_ULTRASONIC);
 
-# Non stop forward movement.
+# Non stop forward movement. ~~ NOT USED in this program
 def Forward():
     print("Moving forward non stop")
-    interface.setMotorRotationSpeedReferences(motors,[-speed,-speed])    
-    while True:
-        time.sleep(1)
+    interface.setMotorRotationSpeedReferences(motors,[-speed, -speed])
 
 # Moves backwards for provided amount of radians to avoid the obstacle in front of it.
 def Backward(distance):
@@ -64,21 +62,36 @@ def medianSonar():
 
 # Program execution.
 while True:
-	usReading = interface.getSensorValue(us_port)
+    
+    usReading = interface.getSensorValue(us_port)
+   
+    k = 0.03
+
+    #if (usReading[0] < 35.0):
+    #   break
+
     # otherwise we use the suggested median measurement that follows.
     # usReading = medianSonar()
     
     # used for debugging
-    print "usReading: " + usReading
+    print "usReading ZERO: " + str(usReading[0])
+    print "Error ZERO: " + str(usReading[0]-35.0)
 
-    while usReading != 30:
-        error = usReading - 30
-        print "Error: " + error
-        speed = -error * speed
-        interface.setMotorRotationSpeedReferences(motors,[-speed,-speed])
+    error = usReading[0] - 35.0
+    print "usReading ONE: " + str(usReading[0])
+    print "Error ONE: " + str(error)
 
-        # maybe we need to use the function motorRotationSpeedReferenceReached(...) somewhere.
-        
-	time.sleep(0.05)
+    # here we need to use velocity control and set the velocity demands of both wheels to be proportional to the
+    # error between the actual and the desired distance using prop control with a single gain value.
+    new_speed = speed * -error * k
+
+    #while interface.motorRotationSpeedReferenceReached:
+    if (new_speed > 15):
+       new_speed = 15
+
+    interface.setMotorRotationSpeedReferences(motors, [new_speed, new_speed])
+
+    # maybe we need to use the function motorRotationSpeedReferenceReached(...) somewhere.
+    time.sleep(0.5)
 
 interface.terminate()

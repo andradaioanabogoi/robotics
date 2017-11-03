@@ -1,6 +1,6 @@
 import brickpi
 import time
-import random # to enable random turn after collision with both sensors touched.
+import random 
 
 interface=brickpi.Interface()
 interface.initialize()
@@ -25,20 +25,20 @@ motorParams.pidParameters.maxOutput = 255
 motorParamsRight = motorParams
 motorParamsLeft = motorParams
 
-motorParamsLeft.pidParameters.k_p = 340
-motorParamsLeft.pidParameters.k_i = 300
-motorParamsLeft.pidParameters.k_d = 300
+motorParamsLeft.pidParameters.k_p = 100
+motorParamsLeft.pidParameters.k_i = 25
+motorParamsLeft.pidParameters.k_d = 25
 
-motorParamsRight.pidParameters.k_p = 340 
-motorParamsRight.pidParameters.k_i = 300
-motorParamsRight.pidParameters.k_d = 300
+motorParamsRight.pidParameters.k_p = 115 
+motorParamsRight.pidParameters.k_i = 25
+motorParamsRight.pidParameters.k_d = 25
 
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
 # Touch sensors, L/R for left and right.
 L_touch_port = 1 
-R_touch_port = 2 
+R_touch_port = 0 
 
 interface.sensorEnable(L_touch_port, brickpi.SensorType.SENSOR_TOUCH);
 interface.sensorEnable(R_touch_port, brickpi.SensorType.SENSOR_TOUCH);
@@ -47,13 +47,11 @@ interface.sensorEnable(R_touch_port, brickpi.SensorType.SENSOR_TOUCH);
 # Non stop forward movement.
 def Forward():
     print("Moving forward non stop")
-    interface.setMotorRotationSpeedReferences(motors,[-speed,-speed])
-    while True:
-        time.sleep(1)
+    interface.setMotorRotationSpeedReferences(motors,[-speed, -speed])
 
 # Moves backwards for provided amount of radians to avoid the obstacle in front of it.
 def Backward(distance):
-    print("Backward movement for " + distance + " radians")
+    print("Backward movement for " + str(distance) + " radians")
     THRESHOLD = 3 # can also be a fraction of time = distance/4 using CW1 working examples.
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [distance, distance])
@@ -64,11 +62,10 @@ def Backward(distance):
                 break
                 
 # Left and Right angles movement should be calibrated in the program carpet_square.py
-# TODO get these functions from that program after calibration.
 def Left90deg():
     print("Turning 90 left")
     THRESHOLD = 3
-    angle = 3.75
+    angle = 4.85
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while interface.motorAngleReferencesReached: 
@@ -80,7 +77,7 @@ def Left90deg():
 def Right90deg():
     print("Turning 90 right")
     THRESHOLD = 3
-    angle = 3.75
+    angle = 4.85
     startTime = time.time()
     interface.increaseMotorAngleReferences(motors, [-angle, angle])
     while interface.motorAngleReferencesReached:
@@ -92,35 +89,35 @@ def Right90deg():
 # Program execution.
 while True:
     # keep moving forward till you hit an obstacle
-    Forward()
-    
+    Forward()    
+   
     # touch sensors readings.
     L_touched = interface.getSensorValue(L_touch_port)
     R_touched = interface.getSensorValue(R_touch_port)
-    
+     
     # if both sensors are touched means we have a collision of type "->|OBSTACLE"
-    if L_touched and R_touched:
+    if L_touched[0] and R_touched[0]:
         print "Hit obsacle - BOTH sensors"
         # to avoid it move backwards and then turn in a random Left or Right Direction.
-        Backward(4)
+        Backward(10)
         turn_options = [Left90deg, Right90deg]
         random.choice(turn_options)()
         Forward()
     
     # if left sensor is touched means we have a left diagonal collision "/>|OBSTACLE"
-    elif L_touched:
-        print "Hit obstacle - LEFT sensor" 
-        Backward(4)
-        Left90deg()
-        Forward()
+    elif L_touched[0]:
+       print "Hit obstacle - LEFT sensor" 
+       Backward(10)
+       Left90deg()
+       Forward()
     
     # if right sensor is touched means we have a rigth diagonal collision "\>|OBSTACLE"
-    elif R_touched:
-        print "Hit obstacle - RIGHT sensor"
-        Backward(4)
-        Right90deg()
-        Forward()
+    elif R_touched[0]:
+       print "Hit obstacle - RIGHT sensor"
+       Backward(10)
+       Right90deg()
+       Forward()
         
-	time.sleep(1) # not 100% sure about value here.
+    time.sleep(0.5) # this is the time between feedback intervals.
 
 interface.terminate()

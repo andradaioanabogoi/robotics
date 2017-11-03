@@ -40,7 +40,17 @@ def Left90deg():
 		break
     
 def Right90deg():
-    pass
+    print("Turning 90 right")
+    THRESHOLD = 3
+#    angle = 3.75
+    angle = 4.15
+    startTime = time.time()
+    interface.increaseMotorAngleReferences(motors, [-angle, angle])
+    while interface.motorAngleReferencesReached:
+        timeNow = time.time()
+        if timeNow - startTime > THRESHOLD:
+                print "Done with turning 90 right -> Ready to execute next move!"
+                break
 
 def Forward40():
     print("Forward 40")
@@ -55,18 +65,33 @@ def Forward40():
                 break
 
 def Backwards40():
-    pass    
+    print("Backwards 40")
+    THRESHOLD = 3
+    distance = 11.75
+    startTime = time.time()
+    interface.increaseMotorAngleReferences(motors, [distance, distance])
+    while interface.motorAngleReferencesReached:
+        timeNow = time.time()
+        if timeNow - startTime > THRESHOLD:
+                print "Done with backwards 40 -> Ready to execute next move!"
+                break    
 
-logfile = raw_input("Specify logfile: ")
-interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
+#logfile = raw_input("Specify logfile: ")
+#interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
-#Forward40()
-Left90deg()
+#Backwards40()
+#Backwards40()
 #Forward40()
 #Left90deg()
 #Forward40()
 #Left90deg()
 #Forward40()
+#Left90deg()
+#Forward40()
+Right90deg()
+Forward40()
+Right90deg()
+Right90deg()
 
-interface.stopLogging()
+#interface.stopLogging()
 interface.terminate()
