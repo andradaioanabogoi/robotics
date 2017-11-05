@@ -65,8 +65,10 @@ def UpdateParticlesAfterForward10(particles):
 
 # Updates uncertainty for Left 90 movement.            
 def UpdateParticlesAfterLeft90(particles):
+    Degrees = 90.0  # angle of left turn is going to be 90 degrees.
+
     for particle in particles:
-        particle[2] = particle[2] + random.gauss(mu, sigma) + random.gauss(mu, sigma)    
+        particle[2] = particle[2] + Degrees + random.gauss(mu, sigma)    
 
 def Square():
     # Setting all particles to starting position [0,0,0].
