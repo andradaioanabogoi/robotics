@@ -25,13 +25,13 @@ motorParams.pidParameters.maxOutput = 255
 motorParamsRight = motorParams
 motorParamsLeft = motorParams
 
-motorParamsLeft.pidParameters.k_p = 100
-motorParamsLeft.pidParameters.k_i = 25
-motorParamsLeft.pidParameters.k_d = 25
+motorParamsLeft.pidParameters.k_p = 250
+motorParamsLeft.pidParameters.k_i = 225
+motorParamsLeft.pidParameters.k_d = 0
 
-motorParamsRight.pidParameters.k_p = 115 
-motorParamsRight.pidParameters.k_i = 25
-motorParamsRight.pidParameters.k_d = 25
+motorParamsRight.pidParameters.k_p = 250 
+motorParamsRight.pidParameters.k_i = 225
+motorParamsRight.pidParameters.k_d = 0
 
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
@@ -86,8 +86,8 @@ while True:
     new_speed = speed * -error * k
 
     #while interface.motorRotationSpeedReferenceReached:
-    if (new_speed > 15):
-       new_speed = 15
+    if (new_speed > 6):
+       new_speed = 6
 
     interface.setMotorRotationSpeedReferences(motors, [new_speed, new_speed])
 

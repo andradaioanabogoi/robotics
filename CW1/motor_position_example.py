@@ -1,4 +1,4 @@
-import brickpi
+import brickpi 
 import time
 
 interface=brickpi.Interface()
@@ -20,12 +20,12 @@ motorParams.pidParameters.maxOutput = 255
 motorParamsRight = motorParams
 motorParamsLeft = motorParams
 
-motorParamsLeft.pidParameters.k_p = 340
-motorParamsLeft.pidParameters.k_i = 300
+motorParamsLeft.pidParameters.k_p = 250
+motorParamsLeft.pidParameters.k_i = 230
 motorParamsLeft.pidParameters.k_d = 0
 
-motorParamsRight.pidParameters.k_p = 340
-motorParamsRight.pidParameters.k_i = 300
+motorParamsRight.pidParameters.k_p = 250
+motorParamsRight.pidParameters.k_i = 230
 motorParamsRight.pidParameters.k_d = 0
 
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)

@@ -23,11 +23,11 @@ motorParamsRight = motorParams
 motorParamsLeft = motorParams
 
 motorParamsLeft.pidParameters.k_p = 250
-motorParamsLeft.pidParameters.k_i = 100
+motorParamsLeft.pidParameters.k_i = 225
 motorParamsLeft.pidParameters.k_d = 0
 
 motorParamsRight.pidParameters.k_p = 250
-motorParamsRight.pidParameters.k_i = 100
+motorParamsRight.pidParameters.k_i = 225
 motorParamsRight.pidParameters.k_d = 0
 
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
@@ -60,7 +60,7 @@ def UpdateParticlesAfterLeft90(particles):
             
 def Left90deg():
     print("Turning 90 left")
-    angle = 4.85
+    angle = 4.55
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while not interface.motorAngleReferencesReached(motors): 
 	    time.sleep(0.1) 
@@ -72,8 +72,8 @@ def Forward10():
     while not interface.motorAngleReferencesReached(motors):  
 	    time.sleep(0.1)    
 
-logfile = raw_input("Specify logfile: ")
-interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
+#logfile = raw_input("Specify logfile: ")
+#interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
 # testing the particles
 #print particles[0]
@@ -81,7 +81,7 @@ interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 #print weights[0]
 
 # First forward movement
-Forward10()
+#Forward10()
 #UpdateParticlesAfterForward10(particles)
 #Forward10()
 #UpdateParticlesAfterForward10(particles)
@@ -90,7 +90,7 @@ Forward10()
 #Forward10()
 
 # First Left
-#Left90deg()
+Left90deg()
 #UpdateParticlesAfterLeft90(particles)
 
 # Second forward movement
@@ -117,5 +117,5 @@ Forward10()
 #Forward10()
 #Forward10()
 
-interface.stopLogging()
+#interface.stopLogging()
 interface.terminate()
