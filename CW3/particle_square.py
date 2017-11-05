@@ -42,21 +42,29 @@ particles = [[0,0,0]] * NUMBER_OF_PARTICLES
 # Array of Weights corresponding to particles.
 weights = [1 / NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES
 
+def ResetParticles():
+    particles = [[0,0,0]] * NUMBER_OF_PARTICLES
+
+def ShowParticles(particles):
+    for p in particles:
+        print p
+    print ''
+
 # Updates uncertainty for Forward movement of 10 cm.
 def UpdateParticlesAfterForward10(particles):
-    D = 3 # need to calculate accuretaly how many radians are 10cm.
-    mu = 0  # in the middle of spec page 2 says something about mean = 0.
-    sigma = 5   # but need to find this standard deviation from real execution.
+    D = 3.0  # need to calculate accuretaly how many radians are 10cm.
+    mu = 0.0  # in the middle of spec page 2 says something about mean = 0.
+    sigma = 5.0  # but need to find this standard deviation from real execution.
     
     for particle in particles:
-        particle[0] = particle[0] + (D + randmo.gauss(mu, sigma)) * math.cos(particle[2])
-        particle[1] = particle[1] + (D + randmo.gauss(mu, sigma)) * math.sin(particle[2])
-        particle[2] = particle[2] + randmo.gauss(mu, sigma)
+        particle[0] = particle[0] + (D + random.gauss(mu, sigma)) * math.cos(particle[2])
+        particle[1] = particle[1] + (D + random.gauss(mu, sigma)) * math.sin(particle[2])
+        particle[2] = particle[2] + random.gauss(mu, sigma)
 
 # Updates uncertainty for Left 90 movement.            
 def UpdateParticlesAfterLeft90(particles):
     for particle in particles:
-        particle[2] = particle[2] + randmo.gauss(mu, sigma) + randmo.gauss(mu, sigma)    
+        particle[2] = particle[2] + random.gauss(mu, sigma) + random.gauss(mu, sigma)    
 
 def Square():
     # First forward movement
@@ -111,7 +119,12 @@ def Forward10():
 #logfile = raw_input("Specify logfile: ")
 #interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
-
+ResetParticles()
+ShowParticles(particles)
+UpdateParticlesAfterForward10(particles)
+ShowParticles(particles)
+UpdateParticlesAfterForward10(particles)
+ShowParticles(particles)
 
 #interface.stopLogging()
 interface.terminate()
