@@ -1,6 +1,33 @@
 SONAR INVESTIGATION FINDINGS:
 
-100cm: 100cm
+Very strange:
+110cm : 255cm
+107cm : 109cm, 110cm
+109cm : 255cm
+108cm : 110cm, 111cm
+115cm : 255cm
+120cm : 255cm
+125cm : 125cm
+130cm : 132cm alternating with many 255 in between.
+135cm : 137cm alternating with many 255 in between.
+140cm : 141cm
+137cm : 139cm
+
+Secondly, for distances more than X cm we noticed an alternation in readings.
+150cm : 150cm, 151cm, 150cm
+200cm : 201cm, 201cm, 201cm
+210cm : 211cm, 210cm, 211cm
+220cm : 221cm alternating with many 222cm
+250cm : 251cm alternating with many 252cm
+252cm : 253cm
+253cm : 254cm
+254cm : 255cm
+255cm : 255cm
+256cm : 255cm
+260cm : 255cm
+270cm : 255cm
+
+100cm: 100cm, 100cm, 100cm
 50cm : 50cm
 30cm : 30cm
 25cm : 25cm

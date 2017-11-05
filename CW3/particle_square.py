@@ -109,14 +109,14 @@ def Square():
 
 def Left90deg():
     print("Turning 90 left")
-    angle = 4.55
+    angle = 4.235
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while not interface.motorAngleReferencesReached(motors): 
 	    time.sleep(0.1) 
     
 def Forward10():
     print("Forward 10")
-    distance = 3.0
+    distance = 3.15
     interface.increaseMotorAngleReferences(motors, [-distance, -distance])
     while not interface.motorAngleReferencesReached(motors):  
 	    time.sleep(0.1)    
