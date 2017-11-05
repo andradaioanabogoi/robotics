@@ -44,7 +44,7 @@ weights = [1 / NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES
 
 # mean and sigma parameters used by the update functions.
 mu = 0.0
-sigma = 5.0
+sigma = 4.0
 
 def ResetParticles():
     particles = [[0,0,0]] * NUMBER_OF_PARTICLES
@@ -127,7 +127,7 @@ def Forward10():
 #logfile = raw_input("Specify logfile: ")
 #interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
-
+Square()
 
 #interface.stopLogging()
 interface.terminate()
