@@ -57,7 +57,41 @@ def UpdateParticlesAfterForward10(particles):
 def UpdateParticlesAfterLeft90(particles):
     for particle in particles:
         particle[2] = particle[2] + randmo.gauss(mu, sigma) + randmo.gauss(mu, sigma)    
-            
+
+def Square():
+    # First forward movement
+    Forward10()
+    Forward10()
+    Forward10()
+    Forward10()
+
+    # First Left
+    Left90deg()
+
+    # Second forward movement
+    Forward10()
+    Forward10()
+    Forward10()
+    Forward10()
+
+    # Second left
+    Left90deg()
+
+    # Third forward movement
+    Forward10()
+    Forward10()
+    Forward10()
+    Forward10()
+
+    # Last left
+    Left90deg()
+
+    # Last forward
+    Forward10()
+    Forward10()
+    Forward10()
+    Forward10()            
+
 def Left90deg():
     print("Turning 90 left")
     angle = 4.55
@@ -72,50 +106,12 @@ def Forward10():
     while not interface.motorAngleReferencesReached(motors):  
 	    time.sleep(0.1)    
 
+# PROGRAM EXECUTION
+
 #logfile = raw_input("Specify logfile: ")
 #interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)
 
-# testing the particles
-#print particles[0]
-#print particles[0][0]
-#print weights[0]
 
-# First forward movement
-#Forward10()
-#UpdateParticlesAfterForward10(particles)
-#Forward10()
-#UpdateParticlesAfterForward10(particles)
-#Forward10()
-#UpdateParticlesAfterForward10(particles)
-#Forward10()
-
-# First Left
-Left90deg()
-#UpdateParticlesAfterLeft90(particles)
-
-# Second forward movement
-#Forward10()
-#Forward10()
-#Forward10()
-#Forward10()
-
-# Second left
-#Left90deg()
-
-# Third forward movement
-#Forward10()
-#Forward10()
-#Forward10()
-#Forward10()
-
-# Last left
-#Left90deg()
-
-# Last forward
-#Forward10()
-#Forward10()
-#Forward10()
-#Forward10()
 
 #interface.stopLogging()
 interface.terminate()
