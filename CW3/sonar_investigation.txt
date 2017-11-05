@@ -1,0 +1,31 @@
+SONAR INVESTIGATION FINDINGS:
+
+100cm: 100cm
+50cm : 50cm
+30cm : 30cm
+25cm : 25cm
+23cm : 23cm
+21cm : 21cm
+
+First strange behaviour we noticed was that: 
+20cm : 21cm
+19cm : 20cm
+18cm : 20cm
+17cm : 20cm
+16cm : 19cm
+15cm : 17cm
+14cm : 17cm
+13cm : 15cm
+12cm : 15cm
+11cm : 13cm
+10cm : 13cm
+9cm  : 12cm
+8cm  : 9cm
+7cm  : 9cm
+6cm  : 8cm
+5cm  : 8cm
+4cm  : 7cm
+3cm  : 6cm
+2cm  : 5cm
+1cm  : 5cm
+0cm  : 255cm
