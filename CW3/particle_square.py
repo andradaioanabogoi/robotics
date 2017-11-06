@@ -1,4 +1,4 @@
-import brickpi  
+import brickpi
 import time
 import random
 import math
@@ -63,10 +63,10 @@ def UpdateParticlesAfterForward10(particles):
         particle[1] = particle[1] + (D + random.gauss(mu, sigma)) * math.sin(particle[2])
         particle[2] = particle[2] + random.gauss(mu, sigma)
 
-# Updates uncertainty for Left 90 movement.            
+# Updates uncertainty for Left 90 movement.
 def UpdateParticlesAfterLeft90(particles):
     for particle in particles:
-        particle[2] = particle[2] + random.gauss(mu, sigma) + random.gauss(mu, sigma)    
+        particle[2] = particle[2] + random.gauss(mu, sigma) + random.gauss(mu, sigma)
 
 def Square():
     # Setting all particles to starting position [0,0,0].
@@ -103,24 +103,26 @@ def Square():
     Forward10()
     Forward10()
     Forward10()
-    Forward10()            
+    Forward10()
 
 def Left90deg():
     print("Turning 90 left")
     angle = 4.55
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
-    while not interface.motorAngleReferencesReached(motors): 
-	    time.sleep(0.1) 
-    
+    while not interface.motorAngleReferencesReached(motors):
+	    time.sleep(0.1)
+
 def Forward10():
     print("Forward 10")
     distance = 3.0
     interface.increaseMotorAngleReferences(motors, [-distance, -distance])
-    while not interface.motorAngleReferencesReached(motors):  
-	    time.sleep(0.1)    
+    while not interface.motorAngleReferencesReached(motors):
+	    time.sleep(0.1)
 
 
 ########## PROGRAM EXECUTION ##########
+UpdateParticlesAfterForward10()
+print particles
 
 #logfile = raw_input("Specify logfile: ")
 #interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)

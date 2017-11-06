@@ -3,30 +3,24 @@ import sys
 import random
 import math
 
-c = 0;
-def getRandomX():
-    return random.randint((c%10)*40, (c%10 + 1)*40)
-
-def getRandomY():
-    return random.randint((c%10)*40, (c%10 + 1)*40)
-
-def getRandomTheta():
-    return random.randint(0, 360)
-
 numberOfParticles = 100
+initial_position = 100
+final_position = 700
+sleep_time = 0.5
+step = 150
 
-line1 = (10, 10, 10, 400) # (x0, y0, x1, y1)
-line2 = (10, 10, 400, 10)
-line3 = (400, 10, 400, 400)
-line4 = (10, 400, 400, 400)
+line1 = (initial_position, initial_position, initial_position, final_position) # (x0, y0, x1, y1)
+line2 = (initial_position, initial_position, final_position, initial_position)
+line3 = (final_position, initial_position, final_position, final_position)
+line4 = (initial_position, final_position, final_position, final_position)
 
 print "drawLine:" + str(line1)
 print "drawLine:" + str(line2)
 print "drawLine:" + str(line3)
 print "drawLine:" + str(line4)
 
-# Array of 100 Particles of the form [x, y, th].
-particles = [[0,0,0]] * numberOfParticles
+# Array of initial_position Particles of the form [x, y, th].
+particles = [[0, 0, 0] for i in range(numberOfParticles)]
 
 # Array of Weights corresponding to particles.
 weights = [1 / numberOfParticles] * numberOfParticles
@@ -35,52 +29,88 @@ weights = [1 / numberOfParticles] * numberOfParticles
 mu = 0.0
 sigma = 5.0
 
-D = 0
+# Updates uncertainty for Forward movement of 10 cm.
+def UpdateParticlesAfterForward10(particles):
+    D = 3.0  # need to calculate accuretaly how many radians are 10cm.
 
-def updateX(i):
-    return particles[i-1][0] + (D + random.gauss(mu, sigma)) * math.cos(particles[i-1][2])
+    for i in range(1, len(particles)):
+        particles[i][0] = particles[i-1][0] + (D + random.gauss(mu, sigma)) * math.cos(particles[i-1][2])
+        particles[i][1] = particles[i-1][1] + (D + random.gauss(mu, sigma)) * math.sin(particles[i-1][2])
+        particles[i][2] = particles[i-1][2] + random.gauss(mu, sigma)
+    return particles
 
-def updateY(i):
-    return particles[i-1][1] + (D + random.gauss(mu, sigma)) * math.sin(particles[i-1][2])
+# Updates uncertainty for Left 90 movement.
+def UpdateParticlesAfterLeft90(particles):
+    for i in range(1, len(particles)):
+        particles[i][0] = particles[i-1][0]
+        particles[i][1] = particles[i-1][1]
+        particles[i][2] = particles[i-1][2] + 90.0 + random.gauss(mu, sigma)
+    return particles
 
-def updateTheta(i):
-    return particles[i-1][2] + (D + random.gauss(mu, sigma))
+k = 0
+while (k < 4):
+    for c in range(0, final_position, step):
+        if k == 0:
+            particles[0] = [initial_position + c, initial_position, 0]
+        elif k == 1:
+            particles[0] = [final_position, initial_position + c, 90]
+        elif k == 2:
+             particles[0] = [final_position - c, final_position, 180]
+        elif k == 3:
+             particles[0] = [initial_position, final_position - c, 270]
+        particles = UpdateParticlesAfterForward10(particles)
+        particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+        print "drawParticles:" + str(particles_new)
+        time.sleep(sleep_time)
 
-def updateXTurn(i):
-    return particles[i-1][0]
+    particles = UpdateParticlesAfterLeft90(particles)
+    particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+    print "drawParticles:" + str(particles_new)
+    time.sleep(sleep_time)
+    k += 1
 
-def updateYTurn(i):
-    return particles[i-1][1]
 
-def updateThetaTurn(i):
-    return particles[i-1][2] + 90 + random.gauss(mu, sigma)
-
-# while True:
-    # Create a list of particles to draw. This list should be filled by tuples (x, y, theta).
-    # particles = [(getRandomX(), getRandomY(), getRandomTheta()) for i in range(numberOfParticles)]
-    # particles_new = [(updateXTurn(i), updateYTurn(i), updateThetaTurn(i)) for i in range(1, numberOfParticles)]
-
-def updatePoints():
-    D = 0
-    while D < 400 :
-        particles = [(updateX(i), updateY(i), updateTheta(i)) for i in range(1, numberOfParticles)]
-        print "drawParticles:" + str(particles)
-
-        D += 100;
-        time.sleep(0.25)
-
-        #particles = [(updateXTurn(i), updateYTurn(i), updateThetaTurn(i)) for i in range(1, numberOfParticles)]
-        #print "drawParticles:" + str(particles)
-        # time.sleep(0.25)
-
-particles = [[0,0,0]] * numberOfParticles
-updatePoints()
-
-particles = [[400,0,90]] * numberOfParticles
-updatePoints()
-
-particles = [[400,400,180]] * numberOfParticles
-updatePoints()
-
-particles = [[400,400,270]] * numberOfParticles
-updatePoints()
+# for c in range(0, final_position, step):
+#     particles[0] = [initial_position + c, initial_position, 0]
+#     particles = UpdateParticlesAfterForward10(particles)
+#     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+#     print "drawParticles:" + str(particles_new)
+#     time.sleep(sleep_time)
+#
+# particles = UpdateParticlesAfterLeft90(particles)
+# particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+# print "drawParticles:" + str(particles_new)
+# time.sleep(sleep_time)
+#
+# for c in range(0, final_position, step):
+#     particles[0] = [final_position, initial_position + c, 90]
+#     particles = UpdateParticlesAfterForward10(particles)
+#     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+#     print "drawParticles:" + str(particles_new)
+#     time.sleep(sleep_time)
+#
+# particles = UpdateParticlesAfterLeft90(particles)
+# particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+# print "drawParticles:" + str(particles_new)
+#
+# for c in range(0, final_position, step):
+#     particles[0] = [final_position - c, final_position, 180]
+#     particles = UpdateParticlesAfterForward10(particles)
+#     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+#     print "drawParticles:" + str(particles_new)
+#     time.sleep(sleep_time)
+#
+# particles = UpdateParticlesAfterLeft90(particles)
+# particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+# print "drawParticles:" + str(particles_new)
+#
+# for c in range(0, final_position, step):
+#     particles[0] = [initial_position, final_position - c, 270]
+#     particles = UpdateParticlesAfterForward10(particles)
+#     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+#     print "drawParticles:" + str(particles_new)
+#     time.sleep(sleep_time)
+#
+# particles = UpdateParticlesAfterLeft90(particles)
+# particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+# print "drawParticles:" + str(particles_new)
