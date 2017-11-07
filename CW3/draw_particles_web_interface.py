@@ -38,7 +38,7 @@ interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 numberOfParticles = 100
 initial_position = 100
 final_position = 700
-sleep_time = 0.5
+sleep_time = 0.25
 step = 150
 
 line1 = (initial_position, initial_position, initial_position, final_position) # (x0, y0, x1, y1)
@@ -94,31 +94,23 @@ def Forward10():
     while not interface.motorAngleReferencesReached(motors):
         time.sleep(0.1)
 
-k = 0
+
 particles = [[initial_position, initial_position, 0] for i in range(numberOfParticles)]
-print particles
-while (k < 4):
+particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+print "drawParticles:" + str(particles_new)
+time.sleep(sleep_time)
+for k in range(4):
     for c in range(step, final_position, step):
-   #     if k == 0:
-    #        particles = [[initial_position + c, initial_position, 0] for i in range(numberOfParticles)]
-     #   elif k == 1:
-      #       particles = [[final_position, initial_position + c, 90] for i in range(numberOfParticles)]
-       # elif k == 2:
-        #    particles = [[final_position - c, final_position, 180] for i in range(numberOfParticles)]
-       # elif k == 3:
-       #     particles = [[initial_position, final_position - c, 270] for i in range(numberOfParticles)]
-        #Forward10()
+        Forward10()
         particles = UpdateParticlesAfterForward10(particles)
         print c, particles
         particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
         print "drawParticles:" + str(particles_new)
         time.sleep(sleep_time)
-        #Left90deg()
+    Left90deg()
     particles = UpdateParticlesAfterLeft90(particles)
     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-    print particles
     print "drawParticles:" + str(particles_new)
     time.sleep(sleep_time)
-    k += 1
 
 interface.terminate()
