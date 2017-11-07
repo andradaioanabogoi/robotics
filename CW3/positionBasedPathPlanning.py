@@ -42,11 +42,6 @@ line2 = (initial_position, initial_position, final_position, initial_position)
 line3 = (final_position, initial_position, final_position, final_position)
 line4 = (initial_position, final_position, final_position, final_position)
 
-#print "drawLine:" + str(line1)
-#print "drawLine:" + str(line2)
-#print "drawLine:" + str(line3)
-#print "drawLine:" + str(line4)
-
 # Array of initial_position Particles of the form [x, y, th].
 particles = [[0, 0, 0] for i in range(numberOfParticles)]
 
@@ -57,6 +52,10 @@ weights = [0.01] * numberOfParticles
 mu = 0.0
 sigma = 5.0
 
+x = 0
+y = 0
+th = 0
+
 def meanValue(particles, weights):
     mean = [0, 0, 0]
     for i in range(0, 100):
@@ -66,60 +65,122 @@ def meanValue(particles, weights):
         mean[2] += weights[i]*particles[i][2]
     return mean
 
-def navigateToWaypoint(float wx, float wy)
+def translateActualRadians(angle):
+    return 2.69608473048 * angle
+    
+def navigateToWaypoint(wx, wy):
     dx = wx - x
     dy = wy - y
     a = math.atan2(dy,dx)
     b = a - th
     dist = math.sqrt(math.pow(dx,2) + math.pow(dy,2))
-    if b > math.pi:
-        b = b - 2*math.pi
-        interface.increaseMotorAngleReferences(motors, [b, -b])
-        while not interface.motorAngleReferencesReached(motors):
-        time.sleep(0.1)
-    elif b <= -math.pi
-        b = b + 2*math.pi
-        interface.increaseMotorAngleReferences(motors, [-b, b])
-        while not interface.motorAngleReferencesReached(motors):
-        time.sleep(0.1)
-    interface.increaseMotorAngleReferences(motors, [-d, -d])
-    while not interface.motorAngleReferencesReached(motors):
-        time.sleep(0.1)
+    print b
+    print a
+    #if b > math.pi:
+    #    b = b - 2*(math.pi)
+    #    interface.increaseMotorAngleReferences(motors, [b, -b])
+    #    while not interface.motorAngleReferencesReached(motors):
+    #        time.sleep(0.1)
+    
+    #elif b <= -(math.pi):
+    #    b = b + 2*(math.pi)
+    #    interface.increaseMotorAngleReferences(motors, [-b, b])
+    #    while not interface.motorAngleReferencesReached(motors):
+    #        time.sleep(0.1)
+    # horizontal right turn        
+    if b == 0:
+        Right90deg()
+        Forward(dist)
+    
+    # forward
+    elif b == (math.pi)/2:
+        Forward(dist)
         
+    # horizontal left turn
+    elif b == math.pi:
+        Left90deg()
+        Forward(dist)
+
+    # diagonal top right
+    elif b > 0 and b < (math.pi)/2:
+        TurndegDR(translateActualRadians(b))
+        #Forward(dist)
+        
+    # diagonal top left
+    elif b > (math.pi)/2 and b < math.pi:
+        TurndegDL(translateActualRadians(b) - (math.pi)/2)
+        Forward(dist)
+        
+    # diagonal bottom left
+    elif b < -(math.pi)/2 and b > -(math.pi):
+        TurndegDL(translateActualRadians(b + 2*(math.pi) - (math.pi)/2))
+        Forward(dist)
+        
+    # diagonal bottom right     
+    elif b < 0 and b > -(math.pi)/2:
+        TurndegDL(translateActualRadians(b - (math.pi)/2))
+        Forward(dist)
+        
+
 # Updates uncertainty for Forward movement of 10 cm.
 def UpdateParticlesAfterForward10(particles):
     D = 3.0  # need to calculate accuretaly how many radians are 10cm.
 
-    for i in range(1, len(particles)):
-        particles[i][0] = particles[i-1][0] + (D + random.gauss(mu, sigma)) * math.cos(particles[i-1][2])
-        particles[i][1] = particles[i-1][1] + (D + random.gauss(mu, sigma)) * math.sin(particles[i-1][2])
-        particles[i][2] = particles[i-1][2] + random.gauss(mu, sigma)
+    for i in range(0, len(particles)):
+        particles[i][0] = particles[i][0] + (D + random.gauss(mu, sigma)) * math.cos(particles[i][2])
+        particles[i][1] = particles[i][1] + (D + random.gauss(mu, sigma)) * math.sin(particles[i][2])
+        particles[i][2] = particles[i][2] + random.gauss(mu, sigma)
     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
     return particles_new
 
 # Updates uncertainty for Left 90 movement.
 def UpdateParticlesAfterLeft90(particles):
-    for i in range(1, len(particles)):
-        particles[i][0] = particles[i-1][0]
-        particles[i][1] = particles[i-1][1]
-        particles[i][2] = particles[i-1][2] + 90.0 + random.gauss(mu, sigma)
+    for i in range(0, len(particles)):
+        particles[i][0] = particles[i][0]
+        particles[i][1] = particles[i][1]
+        particles[i][2] = particles[i][2] + 90.0 + random.gauss(mu, sigma)
     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
     return particles_new
 
 def Left90deg():
     print("Turning 90 left")
-    angle = 4.55
+    angle = 4.235
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while not interface.motorAngleReferencesReached(motors):
         time.sleep(0.1)
 
+def Right90deg():
+    print("Turning 90 right")
+    angle = 4.235
+    interface.increaseMotorAngleReferences(motors, [-angle, angle])
+    while not interface.motorAngleReferencesReached(motors):
+        time.sleep(0.1)
+
+def TurndegDR(angle):
+    print("Turning right " + str(angle))
+    interface.increaseMotorAngleReferences(motors, [-angle, angle])
+    while not interface.motorAngleReferencesReached(motors):
+        time.sleep(0.1)
+        
+def TurndegDL(angle):
+    print("Turning " + str(angle))
+    interface.increaseMotorAngleReferences(motors, [angle, -angle])
+    while not interface.motorAngleReferencesReached(motors):
+        time.sleep(0.1)
+    
 def Forward10():
     print("Forward 10")
-    distance = 3.0
+    distance = 3.15
     interface.increaseMotorAngleReferences(motors, [-distance, -distance])
     while not interface.motorAngleReferencesReached(motors):
         time.sleep(0.1)
         
+def Forward(d):
+    print("Forward " + str(d))
+    interface.increaseMotorAngleReferences(motors, [-d, -d])
+    while not interface.motorAngleReferencesReached(motors):
+        time.sleep(0.1)
+
 #k = 0
 #while (k < 4):
 #    for c in range(150, final_position, step):
@@ -141,8 +202,18 @@ def Forward10():
 #    time.sleep(sleep_time)
 #    k += 1
 
-UpdateParticlesAfterForward10(particles)    
-print particles
-print meanValue(particles, weights)
+#print meanValue(particles, weights)
+
+# right top
+navigateToWaypoint(5, -5)
+
+# left top
+#navigateToWaypoint(-3,4)
+
+# right down
+#navigateToWaypoint(3,-4)
+
+# left down
+#navigateToWaypoint(-3,-4)
 
 interface.terminate()
