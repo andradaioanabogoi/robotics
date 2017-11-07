@@ -2,6 +2,38 @@ import time
 import sys
 import random
 import math
+import brickpi 
+
+interface=brickpi.Interface()
+interface.initialize()
+
+motors = [0,3]
+
+interface.motorEnable(motors[0])
+interface.motorEnable(motors[1])
+
+motorParams = interface.MotorAngleControllerParameters()
+motorParams.maxRotationAcceleration = 6.0
+motorParams.maxRotationSpeed = 12.0
+motorParams.feedForwardGain = 255/20.0
+motorParams.minPWM = 18.0
+motorParams.pidParameters.minOutput = -255
+motorParams.pidParameters.maxOutput = 255
+
+motorParamsRight = motorParams
+motorParamsLeft = motorParams
+
+motorParamsLeft.pidParameters.k_p = 250
+motorParamsLeft.pidParameters.k_i = 225
+motorParamsLeft.pidParameters.k_d = 0
+
+motorParamsRight.pidParameters.k_p = 250
+motorParamsRight.pidParameters.k_i = 225
+motorParamsRight.pidParameters.k_d = 0
+
+interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
+interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
+
 
 numberOfParticles = 100
 initial_position = 100
@@ -37,7 +69,8 @@ def UpdateParticlesAfterForward10(particles):
         particles[i][0] = particles[i-1][0] + (D + random.gauss(mu, sigma)) * math.cos(particles[i-1][2])
         particles[i][1] = particles[i-1][1] + (D + random.gauss(mu, sigma)) * math.sin(particles[i-1][2])
         particles[i][2] = particles[i-1][2] + random.gauss(mu, sigma)
-    return particles
+    particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+    return particles_new
 
 # Updates uncertainty for Left 90 movement.
 def UpdateParticlesAfterLeft90(particles):
@@ -45,11 +78,26 @@ def UpdateParticlesAfterLeft90(particles):
         particles[i][0] = particles[i-1][0]
         particles[i][1] = particles[i-1][1]
         particles[i][2] = particles[i-1][2] + 90.0 + random.gauss(mu, sigma)
-    return particles
+    particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+    return particles_new
 
+def Left90deg():
+    print("Turning 90 left")
+    angle = 4.55
+    interface.increaseMotorAngleReferences(motors, [angle, -angle])
+    while not interface.motorAngleReferencesReached(motors):
+        time.sleep(0.1)
+
+def Forward10():
+    print("Forward 10")
+    distance = 3.0
+    interface.increaseMotorAngleReferences(motors, [-distance, -distance])
+    while not interface.motorAngleReferencesReached(motors):
+        time.sleep(0.1)
+        
 k = 0
 while (k < 4):
-    for c in range(0, final_position, step):
+    for c in range(150, final_position, step):
         if k == 0:
             particles[0] = [initial_position + c, initial_position, 0]
         elif k == 1:
@@ -58,59 +106,14 @@ while (k < 4):
              particles[0] = [final_position - c, final_position, 180]
         elif k == 3:
              particles[0] = [initial_position, final_position - c, 270]
-        particles = UpdateParticlesAfterForward10(particles)
-        particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+        Forward10()
+        particles_new = UpdateParticlesAfterForward10(particles)
         print "drawParticles:" + str(particles_new)
         time.sleep(sleep_time)
-
-    particles = UpdateParticlesAfterLeft90(particles)
-    particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-    print "drawParticles:" + str(particles_new)
+    Left90deg()
+    part_new = UpdateParticlesAfterLeft90(particles)
+    print "drawParticles:" + str(part_new)
     time.sleep(sleep_time)
     k += 1
 
-
-# for c in range(0, final_position, step):
-#     particles[0] = [initial_position + c, initial_position, 0]
-#     particles = UpdateParticlesAfterForward10(particles)
-#     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-#     print "drawParticles:" + str(particles_new)
-#     time.sleep(sleep_time)
-#
-# particles = UpdateParticlesAfterLeft90(particles)
-# particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-# print "drawParticles:" + str(particles_new)
-# time.sleep(sleep_time)
-#
-# for c in range(0, final_position, step):
-#     particles[0] = [final_position, initial_position + c, 90]
-#     particles = UpdateParticlesAfterForward10(particles)
-#     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-#     print "drawParticles:" + str(particles_new)
-#     time.sleep(sleep_time)
-#
-# particles = UpdateParticlesAfterLeft90(particles)
-# particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-# print "drawParticles:" + str(particles_new)
-#
-# for c in range(0, final_position, step):
-#     particles[0] = [final_position - c, final_position, 180]
-#     particles = UpdateParticlesAfterForward10(particles)
-#     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-#     print "drawParticles:" + str(particles_new)
-#     time.sleep(sleep_time)
-#
-# particles = UpdateParticlesAfterLeft90(particles)
-# particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-# print "drawParticles:" + str(particles_new)
-#
-# for c in range(0, final_position, step):
-#     particles[0] = [initial_position, final_position - c, 270]
-#     particles = UpdateParticlesAfterForward10(particles)
-#     particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-#     print "drawParticles:" + str(particles_new)
-#     time.sleep(sleep_time)
-#
-# particles = UpdateParticlesAfterLeft90(particles)
-# particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
-# print "drawParticles:" + str(particles_new)
+interface.terminate()
