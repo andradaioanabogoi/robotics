@@ -34,14 +34,14 @@ motorParamsRight.pidParameters.k_d = 0
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
-
 numberOfParticles = 100
 initial_position = 100
 final_position = 700
 sleep_time = 0.25
 step = 150
 
-line1 = (initial_position, initial_position, initial_position, final_position) # (x0, y0, x1, y1)
+# line =  (x0, y0, x1, y1)
+line1 = (initial_position, initial_position, initial_position, final_position)
 line2 = (initial_position, initial_position, final_position, initial_position)
 line3 = (final_position, initial_position, final_position, final_position)
 line4 = (initial_position, final_position, final_position, final_position)
@@ -63,22 +63,24 @@ sigma = 4.0
 sigma_a = 0.0075
 
 # Updates uncertainty for Forward movement of 10 cm.
-def UpdateParticlesAfterForward10(particles):
+def UpdateParticlesAfterForward10():
     D = 150
-    for i in range(0, 100):
-        particles[i][0] = particles[i][0] + (D + random.gauss(mu, sigma)) * math.cos(particles[i][2])
-        particles[i][1] = particles[i][1] + (D + random.gauss(mu, sigma)) * math.sin(particles[i][2])
-        particles[i][2] = particles[i][2] + random.gauss(mu, sigma_a)
+    e = random.gauss(mu, sigma)
+    f = random.gauss(mu, sigma_a)
+    for particle in particles:
+        particle[0] = particle[0] + (D + e) * math.cos(particle[2])
+        particle[1] = particle[1] + (D + e) * math.sin(particle[2])
+        particle[2] = particle[2] + f
 
     return particles
 
 # Updates uncertainty for Left 90 movement.
-def UpdateParticlesAfterLeft90(particles):
-    for i in range(0, 100):
-        particles[i][0] = particles[i][0]
-        particles[i][1] = particles[i][1]
-        particles[i][2] = particles[i][2] + math.pi/2 + random.gauss(mu, sigma_a)
+def UpdateParticlesAfterLeft90():
+    g = random.gauss(mu, sigma_a)
+    for particle in particles:
+        particle[2] = particle[2] + math.pi/2 + g
     return particles
+
 
 def Left90deg():
     print("Turning 90 left")
@@ -96,20 +98,25 @@ def Forward10():
 
 
 particles = [[initial_position, initial_position, 0] for i in range(numberOfParticles)]
-particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+particles_new =  [(particles[i][0], particles[i][1], particles[i][2])
+                                             for i in range(numberOfParticles)]
 print "drawParticles:" + str(particles_new)
 time.sleep(sleep_time)
+# represents the number of sides
 for k in range(4):
+    # c represents the number of stops the robot does at each side
     for c in range(step, final_position, step):
         Forward10()
-        particles = UpdateParticlesAfterForward10(particles)
+        UpdateParticlesAfterForward10()
         print c, particles
-        particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+        particles_new =  [(particles[i][0], particles[i][1], particles[i][2])
+                                             for i in range(numberOfParticles)]
         print "drawParticles:" + str(particles_new)
         time.sleep(sleep_time)
     Left90deg()
-    particles = UpdateParticlesAfterLeft90(particles)
-    particles_new =  [(particles[i][0], particles[i][1], particles[i][2]) for i in range(numberOfParticles)]
+    UpdateParticlesAfterLeft90()
+    particles_new =  [(particles[i][0], particles[i][1], particles[i][2])
+                                             for i in range(numberOfParticles)]
     print "drawParticles:" + str(particles_new)
     time.sleep(sleep_time)
 

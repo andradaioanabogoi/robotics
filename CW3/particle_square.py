@@ -55,18 +55,23 @@ def ShowParticles(particles):
     print ''
 
 # Updates uncertainty for Forward movement of 10 cm.
-def UpdateParticlesAfterForward10(particles):
-    D = 3.0  # need to calculate accuretaly how many radians are 10cm.
-
+def UpdateParticlesAfterForward10():
+    D = 3.0
+    e = random.gauss(mu, sigma)
+    f = random.gauss(mu, sigma_a)
     for particle in particles:
-        particle[0] = particle[0] + (D + random.gauss(mu, sigma)) * math.cos(particle[2])
-        particle[1] = particle[1] + (D + random.gauss(mu, sigma)) * math.sin(particle[2])
-        particle[2] = particle[2] + random.gauss(mu, sigma)
+        particle[0] = particle[0] + (D + e) * math.cos(particle[2])
+        particle[1] = particle[1] + (D + e) * math.sin(particle[2])
+        particle[2] = particle[2] + f
+
+    return particles
 
 # Updates uncertainty for Left 90 movement.
-def UpdateParticlesAfterLeft90(particles):
+def UpdateParticlesAfterLeft90():
+    g = random.gauss(mu, sigma_a)
     for particle in particles:
-        particle[2] = particle[2] + random.gauss(mu, sigma) + random.gauss(mu, sigma)
+        particle[2] = particle[2] + math.pi/2 + g
+    return particles
 
 def Square():
     # Setting all particles to starting position [0,0,0].
@@ -121,8 +126,6 @@ def Forward10():
 
 
 ########## PROGRAM EXECUTION ##########
-UpdateParticlesAfterForward10()
-print particles
 
 #logfile = raw_input("Specify logfile: ")
 #interface.startLogging("/home/pi/BrickPi/Logfiles/" + logfile)

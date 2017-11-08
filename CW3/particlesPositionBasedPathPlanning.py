@@ -2,7 +2,7 @@ import time
 import sys
 import random
 import math
-import brickpi 
+import brickpi
 
 interface=brickpi.Interface()
 interface.initialize()
@@ -68,7 +68,7 @@ def meanValue():
 
 def translateActualRadians(angle):
     return 2.69608473048 * angle
-    
+
 def navigateToWaypoint(wx, wy):
     dx = wx - x
     dy = wy - y
@@ -77,15 +77,15 @@ def navigateToWaypoint(wx, wy):
     dist = math.sqrt(math.pow(dx,2) + math.pow(dy,2))
     angle = b
 
-    # horizontal right turn        
+    # horizontal right turn
     if b == 0:
         Right90deg()
         Forward(dist)
-    
+
     # forward
     elif b == (math.pi)/2:
         Forward(dist)
-        
+
     # horizontal left turn
     elif b == math.pi:
         Left90deg()
@@ -95,25 +95,25 @@ def navigateToWaypoint(wx, wy):
     elif b > 0 and b < (math.pi)/2:
         TurndegDR(translateActualRadians(b))
         #Forward(dist)
-        
+
     # diagonal top left
     elif b > (math.pi)/2 and b < math.pi:
         angle = translateActualRadians(b) - (math.pi)/2
         TurndegDL(angle)
         Forward(dist)
-        
+
     # diagonal bottom left
     elif b < -(math.pi)/2 and b > -(math.pi):
         angle = translateActualRadians(b + 2*(math.pi) - (math.pi)/2)
         TurndegDL(angle)
         Forward(dist)
-        
-    # diagonal bottom right     
+
+    # diagonal bottom right
     elif b < 0 and b > -(math.pi)/2:
         angle = translateActualRadians(b - (math.pi)/2)
         TurndegDL(angle)
         Forward(dist)
-    
+
     UpdateParticlesAfterTurn(b)
     UpdateParticlesAfterForward(dist)
     meanPositions = meanValue()
@@ -122,21 +122,22 @@ def navigateToWaypoint(wx, wy):
     th_ = meanPositions[2]
     print x_, y_, th_, b
     return x_, y_, th_
-      
+
 # Updates uncertainty for Forward movement of dist cm.
 def UpdateParticlesAfterForward(dist):
-    for i in range(0, len(particles)):
-        particles[i][0] = particles[i][0] + (dist + random.gauss(mu, sigma)) * math.cos(particles[i][2])
-        particles[i][1] = particles[i][1] + (dist + random.gauss(mu, sigma)) * math.sin(particles[i][2])
-        particles[i][2] = particles[i][2] + random.gauss(mu, sigma)
+    e = random.gauss(mu, sigma)
+    f = random.gauss(mu, sigma)
+    for particle in particles:
+        particle[0] = particle[0] + (dist + e) * math.cos(particle[2])
+        particle[1] = particle[1] + (dist + e) * math.sin(particle[2])
+        particle[2] = particle[2] + f
 
 # Updates uncertainty after turn.
 def UpdateParticlesAfterTurn(angle):
-    for i in range(0, len(particles)):
-        particles[i][0] = particles[i][0]
-        particles[i][1] = particles[i][1]
-        particles[i][2] = particles[i][2] + angle + random.gauss(mu, sigma_a)
-        
+    g = random.gauss(mu, sigma_a)
+    for particle in particles:
+        particle[2] = particle[2] + angle + g
+
 def Left90deg():
     print("Turning 90 left")
     angle = 4.235
@@ -156,20 +157,20 @@ def TurndegDR(angle):
     interface.increaseMotorAngleReferences(motors, [-angle, angle])
     while not interface.motorAngleReferencesReached(motors):
         time.sleep(0.1)
-        
+
 def TurndegDL(angle):
     print("Turning " + str(angle))
     interface.increaseMotorAngleReferences(motors, [angle, -angle])
     while not interface.motorAngleReferencesReached(motors):
         time.sleep(0.1)
-    
+
 def Forward10():
     print("Forward 10")
     distance = 3.15
     interface.increaseMotorAngleReferences(motors, [-distance, -distance])
     while not interface.motorAngleReferencesReached(motors):
         time.sleep(0.1)
-        
+
 def Forward(d):
     print("Forward " + str(d))
     interface.increaseMotorAngleReferences(motors, [-d, -d])
@@ -200,8 +201,8 @@ def Forward(d):
 #print meanValue(particles, weights)
 
 # right top
-x, y, th = navigateToWaypoint(5, -5)
-x, y, th = navigateToWaypoint(2, 2)
+# x, y, th = navigateToWaypoint(5, -5)
+# x, y, th = navigateToWaypoint(2, 2)
 
 # left top
 #navigateToWaypoint(-3,4)
@@ -211,5 +212,10 @@ x, y, th = navigateToWaypoint(2, 2)
 
 # left down
 #navigateToWaypoint(-3,-4)
+
+while True:
+    x = float(input("Please enter x: "))
+    y = float(input("Please enter y: "))
+    navigateToWaypoint(x, y)
 
 interface.terminate()
