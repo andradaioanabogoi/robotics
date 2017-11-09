@@ -17,8 +17,10 @@ def sumxy(x, y):
     return sum
 
 N = 10
-xs = np.array([0] * N)
-ys = np.array([0] * N)
+# xs = np.array([0] * N)
+# ys = np.array([0] * N)
+xs = [0, -0.2, -0.5, -1.1, -1.3, -2.1, 2.0, -2.3, 1.0, 1.1]
+ys = [2.4, 3.3, 2.3, 2.8, 3.4, 3.2, 4.2, 4.9, 1.1, 1.7]
 p = covariance_matrix(xs, ys)
 print p[0][0], p[0][1]
 print p[1][0], p[1][1]
