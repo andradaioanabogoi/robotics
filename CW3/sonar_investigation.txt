@@ -1,24 +1,24 @@
-SONAR INVESTIGATION FINDINGS:
+################## SONAR QUESTIONS ##################:
 
-Very strange:
-100cm : 255cm
-110cm : 255cm
-107cm : 109cm, 110cm
-109cm : 255cm
-108cm : 110cm, 111cm
-115cm : 255cm
-120cm : 255cm
-125cm : 125cm
-130cm : 132cm alternating with many 255 in between.
-135cm : 137cm alternating with many 255 in between.
-140cm : 141cm
-137cm : 139cm
+1. minimum 20cm, maximum 207cm
 
-Secondly, for distances more than X cm we noticed an alternation in readings.
-150cm : 150cm (255)
-200cm : 201cm (255)
-210cm : 211cm ()
-220cm : 221cm (255)
+2.
+
+3. 20cm gives 21cm, the rest is perfect.
+
+4. 100% perfect after careful placement.
+
+5. depends on the depth.
+
+################## SONAR INVESTIGATION FINDINGS ################:
+
+100cm : 100cm
+130cm : 130cm 
+200cm : 203cm (202 26%, 203 28%, 255 46% with time.sleep(0.05) and we go to (202 59%, 203 17%, 255 21% with time.sleep(0.1) at this distance
+207cm : 209 (+2) by 93%
+
+the rest is not accurate being at its best 36% correct.
+220cm : 221cm ()
 250cm : 251cm ()
 252cm : 253cm ()
 253cm : 254cm ()
@@ -32,9 +32,9 @@ Secondly, for distances more than X cm we noticed an alternation in readings.
 30cm : 31cm (+1)
 25cm : 25cm 
 23cm : 24m (+1)
-21cm : 22cm (+1)
+21cm : 21cm 
 
-Other strange behaviour we noticed was that: 
+############### BELOW 20cm ################### 
 20cm : 21cm (+1)
 19cm : 21cm (+2)
 18cm : 21cm (+3)

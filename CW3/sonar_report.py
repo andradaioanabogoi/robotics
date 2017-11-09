@@ -43,7 +43,7 @@ while True:
                 	sonar_values.append(usReading)
         	else:
 			sonar_values.append("N/M")
-        	time.sleep(0.01)
+        	time.sleep(0.05)
 
 	generate_report(trial)	
 	break
