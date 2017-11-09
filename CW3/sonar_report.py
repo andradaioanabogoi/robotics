@@ -22,11 +22,14 @@ def generate_report(trial):
 	print "+1 :" + str(sonar_list.count(trial+1))
 	print "+2 :" + str(sonar_list.count(trial+2))
 	print "+3 :" + str(sonar_list.count(trial+3))
+	print "+4 :" + str(sonar_list.count(trial+4))
+	print "+5 :" + str(sonar_list.count(trial+5))
 	print "-1 :" + str(sonar_list.count(trial-1))
 	print "-2 :" + str(sonar_list.count(trial-2))
 	print "-3 :" + str(sonar_list.count(trial-3))
+	print "-4 :" + str(sonar_list.count(trial-4))
+	print "-5 :" + str(sonar_list.count(trial-5))
 	print "255 :" + str(sonar_list.count(255.0))
-	print "N/M :" + sonar_list.count("N/M")
 
 while True:
 	

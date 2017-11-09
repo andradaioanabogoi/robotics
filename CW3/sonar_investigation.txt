@@ -1,6 +1,7 @@
 SONAR INVESTIGATION FINDINGS:
 
 Very strange:
+100cm : 255cm
 110cm : 255cm
 107cm : 109cm, 110cm
 109cm : 255cm
@@ -14,45 +15,44 @@ Very strange:
 137cm : 139cm
 
 Secondly, for distances more than X cm we noticed an alternation in readings.
-150cm : 150cm, 151cm, 150cm
-200cm : 201cm, 201cm, 201cm
-210cm : 211cm, 210cm, 211cm
-220cm : 221cm alternating with many 222cm
-250cm : 251cm alternating with many 252cm
-252cm : 253cm
-253cm : 254cm
-254cm : 255cm
-255cm : 255cm
-256cm : 255cm
-260cm : 255cm
-270cm : 255cm
+150cm : 150cm (255)
+200cm : 201cm (255)
+210cm : 211cm ()
+220cm : 221cm (255)
+250cm : 251cm ()
+252cm : 253cm ()
+253cm : 254cm ()
+254cm : 255cm ()
+255cm : 255cm ()
+256cm : 255cm ()
+260cm : 255cm ()
+270cm : 255cm ()
 
-100cm: 100cm, 100cm, 100cm
-50cm : 50cm
-30cm : 30cm
-25cm : 25cm
-23cm : 23cm
-21cm : 21cm
+50cm : 51cm (+1)
+30cm : 31cm (+1)
+25cm : 25cm 
+23cm : 24m (+1)
+21cm : 22cm (+1)
 
-First strange behaviour we noticed was that: 
-20cm : 21cm
-19cm : 20cm
-18cm : 20cm
-17cm : 20cm
-16cm : 19cm
-15cm : 17cm
-14cm : 17cm
-13cm : 15cm
-12cm : 15cm
-11cm : 13cm
-10cm : 13cm
-9cm  : 12cm
-8cm  : 9cm
-7cm  : 9cm
-6cm  : 8cm
-5cm  : 8cm
-4cm  : 7cm
-3cm  : 6cm
-2cm  : 5cm
-1cm  : 5cm
+Other strange behaviour we noticed was that: 
+20cm : 21cm (+1)
+19cm : 21cm (+2)
+18cm : 21cm (+3)
+17cm : 20cm (+3)
+16cm : 20cm (+4)
+15cm : 19cm (+4)
+14cm : 18cm (+4)
+13cm : 17cm (+4)
+12cm : 16cm (+4)
+11cm : 15cm (+4)
+10cm : 14cm (+4)
+9cm  : 12cm ()
+8cm  : 9cm ()
+7cm  : 9cm ()
+6cm  : 8cm ()
+5cm  : 8cm (+3)
+4cm  : 4cm (25% -> 3, 75% -> 4)
+3cm  : 6cm (+3)
+2cm  : 4cm (+3)
+1cm  : 4cm (+3)
 0cm  : 255cm
