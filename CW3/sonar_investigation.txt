@@ -4,7 +4,8 @@
 
 2. 22.5D gave 46cm (100%) instead of 50cm.
    20.0D gave 49cm (100%) instead of 50cm.
-   15.0D gave 50cm (100%)  
+   15.0D gave 49cm (100%) instead of 50cm. 
+   10.0D gave us exactly 50cm.
 
 3. 20cm gives 21cm, the rest is perfect.
 
