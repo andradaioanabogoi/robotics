@@ -1,0 +1,2 @@
+task 2 position control, path planning, how to compute the movement from where you are and where you want to go, what means to go from one point to another, be consistent with measurement system (units).
+task 3 get statistics mean, variance.
