@@ -161,7 +161,8 @@ def resampling(particles):
     # choose new particle randomly
     new_particles = []
     for p in particles.data:
-        r = random.random()
+        r = random.uniform(0, 1)
+        print r
         for c in cumulative_prob_array:
             # c[0] = lower bound for this particle
             # c[1] = upper bound for this particle
