@@ -148,6 +148,9 @@ w = 0.1
 
 #Initial pos
 current_position = [x, y, th]
+particles.data = [[84, 30, 0, 0.01] for i in range(100)]
+# print "particles.data[0]: ", particles.data[0]
+# print "particles.data[0][0]: ", particles.data[0][0]
 
 # Updates uncertainty for Forward movement of 20 cm.
 def UpdateParticlesAfterForward(dist):
@@ -243,19 +246,19 @@ def calculate_likelihood(x, y, theta, z):
 
 
 def meanValue():
-    mean = current_position
-    # it doesn't get inside here because there are not data inside here, IF WE
-    # GENERATE FOR EXAMPLE: particles.data = [x,y,th,w] then we need to change
-    # all p assignemnts all over the code which are p[1], p[2] etc and they will refer to sth else.
+    mean = [0,0,0]
+    # it was not getting inside here because there were not data inside here, IF WE
+    # GENERATE FOR EXAMPLE: particles.data = [x,y,th,w] as I did above then is ok.
+    # Currently I am not sure if we need to set mean to 0,0,0 it makes  sense to me.
     for p in particles.data:
         #mean += weights[i]*particles[i]
-        mean[0] += p[4] * p[0]
-        mean[1] += p[4] * p[1]
-        mean[2] += p[4] * p[2]
-        print "p[0]: ", p[0]
-        print "p[1]: ", p[1]
-        print "p[2]: ", p[2]
-        print "p[3]: ", p[3]
+        mean[0] += p[3] * p[0]
+        mean[1] += p[3] * p[1]
+        mean[2] += p[3] * p[2]
+        # print "p[0]: ", p[0]
+        # print "p[1]: ", p[1]
+        # print "p[2]: ", p[2]
+        # print "p[3]: ", p[3]
     print "Mean: ", mean
     return mean
     
