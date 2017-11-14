@@ -34,6 +34,10 @@ motorParamsRight.pidParameters.k_d = 0
 interface.setMotorAngleControllerParameters(motors[0],motorParamsLeft)
 interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
+mu = 0.0
+sigma = 4.0
+sigma_a = 0.01
+
 num_particles = 100
 
 # Functions to generate some dummy particles data:
@@ -146,6 +150,7 @@ def normalise_particles(particles):
 
 def resampling(particles):
     normalise_particles(particles)
+    print (particles.data)
 
     # generate cumulative probability array
     cumulative_prob_array = []
@@ -156,7 +161,7 @@ def resampling(particles):
         prev_prob = cumulative_prob
         cumulative_prob += p[3]
         cumulative_prob_array.append((prev_prob, cumulative_prob, p))
-    #print cumulative_prob_array
+    print cumulative_prob_array
     
     # choose new particle randomly
     new_particles = []
@@ -169,16 +174,34 @@ def resampling(particles):
             if r >= c[0] and r < c[1]:
                 new_particles.append([c[2][0], c[2][1], c[2][2], 1.0/100])
     particles.data = new_particles
+    
+# Updates uncertainty for Forward movement of 20 cm.
+def UpdateParticlesAfterForward20(particles):
+    D = 150
+    e = random.gauss(mu, sigma)
+    for p in particles.data:
+        p[0] = p[0] + (D + e) * math.cos(p[2])
+        p[1] = p[1] + (D + e) * math.sin(p[2])
+        p[2] = p[2] + random.gauss(mu, sigma_a)
 
+# Updates uncertainty for Left 90 movement.
+def UpdateParticlesAfterTurn(particles):
+    for p in particles.data:
+        p[0] = p[0]
+        p[1] = p[1]
+        p[2] = p[2] + math.pi/2 + random.gauss(mu, sigma_a)  
+    
+    
 if __name__ == "__main__":
     particles = Particles();
     sum_weights = 0
     particles.data = [[1,2,3,4], [1,0,4,0], [0,1,9,8], [5,4,9,6]]
     #normalise_particles(particles)
     print particles.data
-    resampling(particles)
+    UpdateParticlesAfterForward20(particles)
     print particles.data
     
+    #resampling(particles)
+    #print particles.data
+    
 interface.terminate()
-
-

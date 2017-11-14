@@ -38,6 +38,10 @@ interface.setMotorAngleControllerParameters(motors[1],motorParamsRight)
 
 interface.sensorEnable(port, brickpi.SensorType.SENSOR_ULTRASONIC)
 
+mu = 0.0
+sigma = 2.5
+sigma_a = 0.01
+
 # Functions to generate some dummy particles data:
 def calcX():
     return random.gauss(80,3) + 70*(math.sin(t)); # in cm
@@ -107,6 +111,7 @@ class Particles:
     
     def draw(self):
         canvas.drawParticles(self.data);
+        
 
 canvas = Canvas();    # global canvas we are going to draw on
 
@@ -143,6 +148,22 @@ th = 0
 #Initial pos
 init_pos = [x, y, th]
 
+# Updates uncertainty for Forward movement of 20 cm.
+def UpdateParticlesAfterForward(dist):
+    D = dist * canvas.map_size
+    e = random.gauss(mu, sigma)
+    for p in particles.data:
+        p[0] = p[0] + (D + e) * math.cos(p[2])
+        p[1] = p[1] + (D + e) * math.sin(p[2])
+        p[2] = p[2] + random.gauss(mu, sigma_a)
+
+# Updates uncertainty for Left 90 movement.
+def UpdateParticlesAfterTurn(angle):
+    for p in particles.data:
+        p[0] = p[0]
+        p[1] = p[1]
+        p[2] = p[2] + angle + random.gauss(mu, sigma_a)
+
 def calculate_likelihood(x, y, theta, z):
     # Array of ground distances towards to walls
     m = []
@@ -158,9 +179,8 @@ def calculate_likelihood(x, y, theta, z):
     for wall in walls:
         numerator = (wall[3] - wall[1]) * (wall[0] - x) - (wall[2] - wall[0]) * (wall[1] - y)
         denominator = (wall[3] - wall[1]) * math.cos(theta) - (wall[2] - wall[0]) * math.sin(theta)
-        print "wall", wall, "denominator part 1, 2", (wall[3] - wall[1]) * math.cos(theta), (wall[2] - wall[0]) * math.sin(theta)
         if denominator == 0:
-            m.append(-10)
+            m.append(-300)
         else:
             m_distance = numerator / denominator
             m.append(m_distance)
@@ -182,7 +202,7 @@ def calculate_likelihood(x, y, theta, z):
         # It does so by iterating over all 8 walls.
         for i in range(0, len(m)):
             if j == 0:
-                if m[i] < current_min and m[i] > 0: 
+                if m[i] <= current_min and m[i] > 0: 
                     current_min = m[i]
                     min_index = i
             # Gets the second/third/etc positive distance from a wall in case first one is not a meeting point with a real world.
@@ -191,7 +211,7 @@ def calculate_likelihood(x, y, theta, z):
                     current_min = m[i]
                     min_index = i
         # debugging statements.
-        print "current_min", current_min, "min_index", min_index, "new_min", new_min
+        print "current_min", current_min, "min_index", min_index
         wall_found = check_wall_boundaries(walls[min_index], m_walls[min_index])
         print "wall_found", wall_found
         if wall_found:
@@ -200,7 +220,7 @@ def calculate_likelihood(x, y, theta, z):
     # Calculation of the likelihood value.
     print "z, m_index, m[m_index]", z, min_index, m[min_index]
     diff = z - m[min_index]    
-    sd = 2.0  # TODO CHANGE IT based on task 2.3 where we use an array of all measurements and the standard deviation is found from there.
+    sd = 2.5  
     e_numerator = -math.pow(diff, 2)
     e_denominator = 2 * math.pow(sd, 2)
     likelihood = math.pow(math.e, e_numerator/e_denominator)
@@ -219,12 +239,27 @@ def calculate_likelihood(x, y, theta, z):
     
     print "likelihood", likelihood
     return likelihood
+
+
+def meanValue():
+    mean = [0, 0, 0]
+    for p in particles.data:
+        #mean += weights[i]*particles[i]
+        mean[0] += p[4] * particles.data[0]
+        mean[1] += p[4] * particles.data[1]
+        mean[2] += p[4] * particles.data[2]
+    return mean
     
 
 def check_wall_boundaries(wall, m_wall):
     # Ax <= Mx and Mx <= Bx and Ay <= My and My <= By
+    print "wall[0] <= m_wall[0]", "m_wall[0] <= wall[2])", "(wall[1] <= m_wall[1]", "m_wall[1] <= wall[3]", wall[0] <= m_wall[0], m_wall[0] <= wall[2], wall[1] <= m_wall[1], m_wall[1] <= wall[3]
     print "wall", wall, "m_wall", m_wall
-    return (wall[0] <= m_wall[0] and m_wall[0] <= wall[2]) and (wall[1] <= m_wall[1] and m_wall[1] <= wall[3])
+    min_wall_x = wall[0] if wall[0] < wall[2] else wall[2]
+    max_wall_x = wall[2] if wall[2] > wall[0] else wall[0]
+    min_wall_y = wall[1] if wall[1] < wall[3] else wall[3]
+    max_wall_y = wall[3] if wall[3] > wall[1] else wall[1]
+    return (min_wall_x <= m_wall[0] and m_wall[0] <= max_wall_x) and (min_wall_y <= m_wall[1] and m_wall[1] <= max_wall_y)
         
         
 def incidence_angle_too_big(angle):
@@ -249,14 +284,40 @@ def navigateToWaypoint(wx, wy):
     if b > math.pi:
          b = b - 2*math.pi
     #translates the angle to turn to the wheel angle
-    angle = (b*4.135*2)/math.pi
-    print "Global x, y, th: " + str(x) + " " + str(y) + " " +  str(th)
+    angle = (b*3.777*2)/math.pi
+    # print "Global x, y, th: " + str(x) + " " + str(y) + " " +  str(th)
     #moves the robot
     TurndegDL(angle)
-    #1 unit is 10 cm
-    ForwardCm(dist)
-    return [wx, wy, a]
+    UpdateParticlesAfterTurn(angle)
+    
+    number_of_twenties = dist // 20
+    remainder = dist % 20
+    
+    #for 20, recalibrate loop
+    for x in range(0, int(number_of_twenties)):
+        ForwardCm(20)
+        UpdateParticlesAfterForward(20)
+        print "angle", a
+        z = get_sonar_reading()
+        print "z", z
+        calculate_likelihood(180, 30, a, z)
+        time.sleep(1)     
+    
+    #remainder move, recalibrate
+    ForwardCm(remainder)
+    UpdateParticlesAfterForward(remainder)
+    print "angle", a
+    z = get_sonar_reading()
+    print "z", z
+    likelihod = calculate_likelihood(180, 30, a, z)
+    time.sleep(1)
+    mean = meanValue()
+    
+    return [mean[0], mean[1], mean[2]]
 
+#TurndegDL(3.777)
+#time.sleep(1.0)
+#TurndegDL(-3.9)
 #radius for 20cm 
 r = 3.23
 
@@ -295,14 +356,14 @@ def get_sonar_reading():
 # 1) Navigate to the first waypoint that the tutorial sheet is giving.
 # 2) Test the calculateLikelyhoold function by observing if the robot is giving the correct wall and distance from it.
 
-current_position = navigateToWaypoint(180, 30)
-angle = current_position[2]
-print "angle", angle
-z = get_sonar_reading()
-print "z", z
-calculate_likelihood(180, 30, angle, z)
+current_position = navigateToWaypoint(180, 30)     
 
-     
+t = 0;
+while True:
+    particles.update();
+    particles.draw();
+    t += 0.05;
+    time.sleep(0.05);
     
 interface.terminate()
 
