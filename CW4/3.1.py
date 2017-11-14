@@ -50,7 +50,7 @@ def calcY():
     return random.gauss(70,3) + 60*(math.sin(2*t)); # in cm
 
 def calcW():
-    return random.random();
+    return random.random;
 
 def calcTheta():
     return random.randint(0,360);
@@ -104,13 +104,42 @@ class Map:
 class Particles:
     def __init__(self):
         self.n = 100;    
-        self.data = [];
+        self.data = []; # data contents updated in class initialisation.
+        self.dataTuple = []
+        self.mean = [0, 0, 0]
+        
+    def calculateMean(self):
+        mean = [0, 0, 0] 
+        for p in particles.data:
+            mean[0] += p[3] * p[0]
+            mean[1] += p[3] * p[1]
+            mean[2] += p[3] * p[2]
+        print "mean", mean
+        return mean
 
     def update(self):
         self.data = [(calcX(), calcY(), calcTheta(), calcW()) for i in range(self.n)];
+        
+    def updateAfterForward(self, dist):
+        D = dist
+        e = random.gauss(mu, sigma)
+        for p in self.data:
+            p[0] = p[0] + (D + e) * math.cos(p[2])
+            p[1] = p[1] + (D + e) * math.sin(p[2])
+            p[2] = p[2] + random.gauss(mu, sigma_a)
+        self.dataTuple =  [(self.data[i][0], self.data[i][1], self.data[i][2]) for i in range(self.n)]
+        self.mean = self.calculateMean()
     
+    def updateAfterTurn(self, angle):
+        for p in self.data:
+            p[0] = p[0]
+            p[1] = p[1]
+            p[2] = p[2] + angle + random.gauss(mu, sigma_a)
+        self.dataTuple =  [(self.data[i][0], self.data[i][1], self.data[i][2]) for i in range(self.n)]
+        self.mean = self.calculateMean()
+        
     def draw(self):
-        canvas.drawParticles(self.data);
+        canvas.drawLine(self.dataTuple);
         
 
 canvas = Canvas();    # global canvas we are going to draw on
@@ -141,30 +170,47 @@ walls = mymap.get_walls()
 
 particles_b_angles = []
 
+# holds all the likelihoods.
+likelihood = [0 for i in range(100)]
+
 x = 84
 y = 30
 th = 0
+w = 0.1
 
 #Initial pos
-init_pos = [x, y, th]
+current_position = [x, y, th]
+particles.data = [[84, 30, 0, 0.01] for i in range(100)]
+# print "particles.data[0]: ", particles.data[0]
+# print "particles.data[0][0]: ", particles.data[0][0]
+
+# Updates the likelihood of all particles.
+def UpdateLikelihood(z):
+    print "IME MES TO UPDATE LIKELIHOOD"
+    for i in range(len(particles.data)):
+        print "counter", i
+        likelihood.append(calculate_likelihood(particles.data[i][0], particles.data[i][1], particles.data[i][2], z))
 
 # Updates uncertainty for Forward movement of 20 cm.
 def UpdateParticlesAfterForward(dist):
-    D = dist * canvas.map_size
+    D = dist
     e = random.gauss(mu, sigma)
     for p in particles.data:
         p[0] = p[0] + (D + e) * math.cos(p[2])
         p[1] = p[1] + (D + e) * math.sin(p[2])
         p[2] = p[2] + random.gauss(mu, sigma_a)
+    current_position = meanValue()
 
-# Updates uncertainty for Left 90 movement.
+# Updates uncertainty for Left turn movement.
 def UpdateParticlesAfterTurn(angle):
     for p in particles.data:
         p[0] = p[0]
         p[1] = p[1]
         p[2] = p[2] + angle + random.gauss(mu, sigma_a)
+    current_position = meanValue()
 
 def calculate_likelihood(x, y, theta, z):
+    print "IME MES TO CALCULATE LIKELIHOOD"
     # Array of ground distances towards to walls
     m = []
     # Updated world coordinates for point of intersection (aka meeting point) with walls in map.
@@ -184,16 +230,13 @@ def calculate_likelihood(x, y, theta, z):
         else:
             m_distance = numerator / denominator
             m.append(m_distance)
-    # debugging statement
-    print "m", m
     
     # calculates the point of intersection with a wall in the world map.
     for m_dist in m:
         x_wall = x + m_dist * math.cos(theta)
         y_wall = y + m_dist * math.sin(theta)
         m_walls.append((x_wall, y_wall))
-    print "m_walls", m_walls
-    
+   
     for j in range(0, len(walls)):
         # Finding smallest positive distance from a wall.
         while current_min <= 0:
@@ -211,14 +254,11 @@ def calculate_likelihood(x, y, theta, z):
                     current_min = m[i]
                     min_index = i
         # debugging statements.
-        print "current_min", current_min, "min_index", min_index
         wall_found = check_wall_boundaries(walls[min_index], m_walls[min_index])
-        print "wall_found", wall_found
+        print "wall_found", walls[min_index]
         if wall_found:
             break
     
-    # Calculation of the likelihood value.
-    print "z, m_index, m[m_index]", z, min_index, m[min_index]
     diff = z - m[min_index]    
     sd = 2.5  
     e_numerator = -math.pow(diff, 2)
@@ -237,24 +277,22 @@ def calculate_likelihood(x, y, theta, z):
     # adds this opinion on a global array of particle angles.
     particles_b_angles.append(b_too_big)
     
-    print "likelihood", likelihood
+    print "likelihood", likelihood, " x", x, " y", y 
     return likelihood
 
 
 def meanValue():
-    mean = [0, 0, 0]
+    mean = [0, 0, 0] 
     for p in particles.data:
-        #mean += weights[i]*particles[i]
-        mean[0] += p[4] * particles.data[0]
-        mean[1] += p[4] * particles.data[1]
-        mean[2] += p[4] * particles.data[2]
+        mean[0] += p[3] * p[0]
+        mean[1] += p[3] * p[1]
+        mean[2] += p[3] * p[2]
+    print "Mean: ", mean
     return mean
     
 
 def check_wall_boundaries(wall, m_wall):
     # Ax <= Mx and Mx <= Bx and Ay <= My and My <= By
-    print "wall[0] <= m_wall[0]", "m_wall[0] <= wall[2])", "(wall[1] <= m_wall[1]", "m_wall[1] <= wall[3]", wall[0] <= m_wall[0], m_wall[0] <= wall[2], wall[1] <= m_wall[1], m_wall[1] <= wall[3]
-    print "wall", wall, "m_wall", m_wall
     min_wall_x = wall[0] if wall[0] < wall[2] else wall[2]
     max_wall_x = wall[2] if wall[2] > wall[0] else wall[0]
     min_wall_y = wall[1] if wall[1] < wall[3] else wall[3]
@@ -268,9 +306,10 @@ def incidence_angle_too_big(angle):
         
 # Nicolay waypoint function
 def navigateToWaypoint(wx, wy):
-    dx = wx - init_pos[0]
-    dy = wy - init_pos[1]
-    th = init_pos[2]
+    global current_position
+    dx = wx - current_position[0]
+    dy = wy - current_position[1]
+    th = current_position[2]
     
     print "dx, dy: " + str(dx) +  " " + str(dy)
     
@@ -284,11 +323,13 @@ def navigateToWaypoint(wx, wy):
     if b > math.pi:
          b = b - 2*math.pi
     #translates the angle to turn to the wheel angle
-    angle = (b*3.777*2)/math.pi
+    angle = (b*3.777*2)/math.pi 
     # print "Global x, y, th: " + str(x) + " " + str(y) + " " +  str(th)
-    #moves the robot
-    TurndegDL(angle)
-    UpdateParticlesAfterTurn(angle)
+    if angle > 0:
+        TurndegDL(angle)   
+        UpdateParticlesAfterTurn(angle)
+        z = get_sonar_reading()
+        #UpdateLikelihood(z)
     
     number_of_twenties = dist // 20
     remainder = dist % 20
@@ -296,25 +337,23 @@ def navigateToWaypoint(wx, wy):
     #for 20, recalibrate loop
     for x in range(0, int(number_of_twenties)):
         ForwardCm(20)
+        # particles.updateAfterForward(20)
         UpdateParticlesAfterForward(20)
-        print "angle", a
         z = get_sonar_reading()
-        print "z", z
-        calculate_likelihood(180, 30, a, z)
+        #UpdateLikelihood(z)
         time.sleep(1)     
     
-    #remainder move, recalibrate
-    ForwardCm(remainder)
-    UpdateParticlesAfterForward(remainder)
-    print "angle", a
-    z = get_sonar_reading()
-    print "z", z
-    likelihod = calculate_likelihood(180, 30, a, z)
+    if remainder > 0.0:
+        # remainder forward distance and MCL algorithm execution.
+        ForwardCm(remainder)
+        UpdateParticlesAfterForward(remainder)
+        z = get_sonar_reading()
+        #UpdateLikelihood(z)
+  
     time.sleep(1)
-    mean = meanValue()
+    current_position = meanValue()
+    print "current_position", current_position
     
-    return [mean[0], mean[1], mean[2]]
-
 #TurndegDL(3.777)
 #time.sleep(1.0)
 #TurndegDL(-3.9)
@@ -356,14 +395,57 @@ def get_sonar_reading():
 # 1) Navigate to the first waypoint that the tutorial sheet is giving.
 # 2) Test the calculateLikelyhoold function by observing if the robot is giving the correct wall and distance from it.
 
-current_position = navigateToWaypoint(180, 30)     
+print "Current position", current_position
 
-t = 0;
+print "\n /// NAVIGATING TO WAYPOINT 2 /// \n"
+navigateToWaypoint(180,30)
+
+print "Current position", current_position
+
+print "\n /// NAVIGATING TO WAYPOINT 3 /// \n"
+navigateToWaypoint(180,54)
+
+print "Current position", current_position
+
+print "\n /// NAVIGATING TO WAYPOINT 4 /// \n"
+navigateToWaypoint(138,54)
+
+print "Current position", current_position
+
+print "\n /// NAVIGATING TO WAYPOINT 5 /// \n"
+navigateToWaypoint(138,168)
+
+print "Current position", current_position
+
+print "\n /// NAVIGATING TO WAYPOINT 6 /// \n"
+navigateToWaypoint(114,168)
+
+print "Current position", current_position
+
+print "\n /// NAVIGATING TO WAYPOINT 7 /// \n"
+navigateToWaypoint(114,84)
+
+print "Current position", current_position
+
+print "\n /// NAVIGATING TO WAYPOINT 8 /// \n"
+navigateToWaypoint(84,84)
+
+print "Current position", current_position
+
+print "\n /// NAVIGATING TO WAYPOINT 9 /// \n"
+navigateToWaypoint(84,30)
+
+print "Current position", current_position
+
+'''t = 0;
 while True:
+    print "Current position", current_position
+    print "\n /// NAVIGATING TO WAYPOINT 2 /// \n"
+    navigateToWaypoint(180,30)
     particles.update();
     particles.draw();
     t += 0.05;
-    time.sleep(0.05);
+    time.sleep(0.05);'''
     
 interface.terminate()
 
