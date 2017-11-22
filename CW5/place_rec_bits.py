@@ -6,6 +6,7 @@ import random
 import os
 import brickpi
 import time
+import math
 
 interface=brickpi.Interface()
 interface.initialize()
@@ -135,8 +136,18 @@ def characterize_location(ls):
 def compare_signatures(ls1, ls2):
     dist = 0
     print "TODO:    You should implement the function that compares two signatures."
-    
+    # implements the correlation test
+    # assumes that ls1 is the new observation and ls2 is the already saved following what is done in
+    # recognise location function.
+    for i in range(0, len(ls1.sig)):
+        diff_sq = math.pow(ls1.sig[i] - ls2.sig[i], 2)
+        dist += diff_sq
+    print "distance:", dist
     return dist
+    # after returning the distance it should pick the minimum distance found so a good way to do this
+    # is to place distances in an array of distances that matches the known waypoints that the lecturer wants
+    # us to test on which are the first 5 waypoints, so distances[0] will be the 1st waypoint and so on.
+    # I believe the place that allows is the recognize_location() function.
 
 # This function characterizes the current location, and stores the obtained 
 # signature into the next available file.
@@ -182,7 +193,12 @@ def recognize_location():
 #learn_location();
 #recognize_location();
 
-# testing characterize location incrementally
-ls = LocationSignature()
-characterize_location(ls)
+# testing characterize location incrementally, result: PASSED
+# ls = LocationSignature()
+# characterize_location(ls)
+
+# testing compare_signatures incrementally, result: PASSED
+ls1 = LocationSignature()
+ls2 = LocationSignature()
+compare_signatures(ls1, ls2)
 
