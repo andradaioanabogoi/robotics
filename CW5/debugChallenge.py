@@ -101,7 +101,7 @@ while True:
             time.sleep(0.1)
         if L_touched[0] and not R_touched[0]:
             #touchedLeft = True
-            interface.increaseMotorAngleReferences(motors, [-d/2, d/2])
+            interface.increaseMotorAngleReferences(motors, [d/2, -d/2])
             while not interface.motorAngleReferencesReached(motors): 
                 time.sleep(0.1)
             left = random.choice([True, False])
@@ -109,7 +109,7 @@ while True:
             continue
         elif R_touched[0] and not L_touched[0]:
             #touchedRight = True
-            interface.increaseMotorAngleReferences(motors, [d/2, -d/2])
+            interface.increaseMotorAngleReferences(motors, [-d/2, d/2])
             while not interface.motorAngleReferencesReached(motors): 
                 time.sleep(0.1)
             left = not left
