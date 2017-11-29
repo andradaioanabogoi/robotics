@@ -47,6 +47,10 @@ R_touch_port = 3
 interface.sensorEnable(L_touch_port, brickpi.SensorType.SENSOR_TOUCH);
 interface.sensorEnable(R_touch_port, brickpi.SensorType.SENSOR_TOUCH);
 
+touchedBefore = False
+touchedRight = False
+touchedLeft = False
+
 # boolean that defines if we firstly turned right.
 right = random.choice([True, False])
 # boolean that defines if we have turned or not.
@@ -90,22 +94,36 @@ while True:
             time.sleep(1.25)
             
     if L_touched[0] or R_touched[0]:
+        #touchedBefore = True
         d = 3
         interface.increaseMotorAngleReferences(motors, [d, d])
         while not interface.motorAngleReferencesReached(motors):  
             time.sleep(0.1)
         if L_touched[0] and not R_touched[0]:
+            #touchedLeft = True
             interface.increaseMotorAngleReferences(motors, [-d/2, d/2])
             while not interface.motorAngleReferencesReached(motors): 
-	            time.sleep(0.1)
+                time.sleep(0.1)
+            left = random.choice([True, False])
+            right = not right
+            continue
         elif R_touched[0] and not L_touched[0]:
+            #touchedRight = True
             interface.increaseMotorAngleReferences(motors, [d/2, -d/2])
             while not interface.motorAngleReferencesReached(motors): 
-	            time.sleep(0.1)
+                time.sleep(0.1)
+            left = not left
+            right = random.choice([True, False])
+            continue
         else:
+            #touchedRight = True
             interface.increaseMotorAngleReferences(motors, [d/2, -d/2])
             while not interface.motorAngleReferencesReached(motors): 
-	            time.sleep(0.1)
+                time.sleep(0.1)
+            left = not left
+            right = random.choice([True, False])
+            continue
+        
     time.sleep(0.5)
         
     interface.setMotorRotationSpeedReferences(motors, [speed, speed])
