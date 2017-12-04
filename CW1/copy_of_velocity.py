@@ -4,8 +4,8 @@ import time
 interface=brickpi.Interface()
 interface.initialize()
 
-motors = [0,1]
-speed = -6.0
+motors = [0,3]
+speed = 6.0
 
 interface.motorEnable(motors[0])
 interface.motorEnable(motors[1])
@@ -17,14 +17,14 @@ motorParams.feedForwardGain = 255/20.0
 motorParams.minPWM = 18.0
 motorParams.pidParameters.minOutput = -255
 motorParams.pidParameters.maxOutput = 255
-motorParams.pidParameters.k_p = 100.0
-motorParams.pidParameters.k_i = 0.0
-motorParams.pidParameters.k_d = 0.0
+motorParams.pidParameters.k_p = 320.0
+motorParams.pidParameters.k_i = 300.0
+motorParams.pidParameters.k_d = 300.0
 
 interface.setMotorAngleControllerParameters(motors[0],motorParams)
 interface.setMotorAngleControllerParameters(motors[1],motorParams)
 
-interface.setMotorRotationSpeedReferences(motors,[speed,speed])
+interface.setMotorRotationSpeedReferences(motors,[-speed,-speed])
 
 print "Press Ctrl+C to exit"
 while True:

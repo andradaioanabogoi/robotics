@@ -5,7 +5,7 @@ interface=brickpi.Interface()
 interface.initialize()
 
 motors = [0,1]
-speed = -6.0
+speed = 6.0
 
 interface.motorEnable(motors[0])
 interface.motorEnable(motors[1])
